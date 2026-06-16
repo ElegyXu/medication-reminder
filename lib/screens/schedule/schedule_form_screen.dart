@@ -228,7 +228,12 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                 isExpanded: true,
                 alignment: AlignmentDirectional.centerStart,
                 decoration: InputDecoration(
-                  labelText: '关联药品',
+                  label: const Text.rich(
+                    TextSpan(
+                      text: '关联药品',
+                      children: [TextSpan(text: ' *', style: TextStyle(color: Colors.red))],
+                    ),
+                  ),
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
                   border: OutlineInputBorder(
@@ -341,7 +346,8 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
             const SizedBox(height: 8),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.only(right: 8),
+              clipBehavior: Clip.none,
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               child: SegmentedButton<ScheduleFrequency>(
                 segments: const [
                   ButtonSegment(value: ScheduleFrequency.daily, label: Text('每日')),
