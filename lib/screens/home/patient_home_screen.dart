@@ -252,53 +252,87 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     );
   }
 
-  // --- 用药进度 + 记录状态 ---
+  // --- 用药进度（Material Design 3） ---
   Widget _buildProgressRow() {
     return Consumer<ReminderProvider>(
       builder: (context, provider, _) {
         final total = provider.todayStats['total'] ?? 0;
         final taken = provider.todayStats['taken'] ?? 0;
-        return Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('用药进度', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-                  const SizedBox(height: 4),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text('$taken', style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-                      Text('/$total', style: TextStyle(fontSize: 16, color: Colors.grey.shade400)),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
+        final ratio = total > 0 ? taken / total : 0.0;
+        return Card(
+          elevation: 0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFC41E3A).withAlpha(25),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.medication, color: Color(0xFFC41E3A), size: 22),
+                    ),
+                    const SizedBox(width: 12),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('今日用药', style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w500)),
+                        const SizedBox(height: 2),
+                        RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(text: '$taken', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFFC41E3A))),
+                              TextSpan(text: ' / $total', style: TextStyle(fontSize: 18, color: Colors.grey.shade400, fontWeight: FontWeight.w500)),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    if (ratio >= 1.0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFC41E3A).withAlpha(20),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.check_circle, color: Color(0xFFC41E3A), size: 16),
+                            SizedBox(width: 4),
+                            Text('全部完成', style: TextStyle(color: Color(0xFFC41E3A), fontSize: 13, fontWeight: FontWeight.w600)),
+                          ],
+                        ),
+                      ),
+                  ],
+                ),
+                if (total > 0) ...[
+                  const SizedBox(height: 16),
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(3),
+                    borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
-                      value: total > 0 ? taken / total : 0,
-                      backgroundColor: Colors.grey.shade200,
+                      value: ratio,
+                      backgroundColor: const Color(0xFFC41E3A).withAlpha(20),
                       valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFC41E3A)),
-                      minHeight: 5,
+                      minHeight: 8,
                     ),
                   ),
+                  const SizedBox(height: 6),
+                  Text(
+                    ratio >= 1.0 ? '太棒了，今天全部完成！' : '还剩 ${total - taken} 次用药待打卡',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                  ),
                 ],
-              ),
+              ],
             ),
-            const SizedBox(width: 16),
-            OutlinedButton.icon(
-              onPressed: () => setState(() => _currentTab = 3),
-              icon: const Icon(Icons.assignment, size: 18),
-              label: const Text('记录状态'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFFC41E3A),
-                side: const BorderSide(color: Color(0xFFC41E3A)),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              ),
-            ),
-          ],
+          ),
         );
       },
     );
@@ -368,7 +402,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         r.scheduledTime.day == date.day);
   }
 
-  // --- 连续服药 + 历史日历 ---
+  // --- 连续服药 ---
   Widget _buildStreakFooter() {
     return Consumer<ReminderProvider>(
       builder: (context, provider, _) {
@@ -378,18 +412,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             const SizedBox(width: 4),
             Text('已连续服药 ${provider.consecutiveDays} 天',
                 style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
-            const Spacer(),
-            GestureDetector(
-              onTap: () {}, // TODO: 跳转历史日历
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('历史日历', style: TextStyle(fontSize: 13, color: const Color(0xFFC41E3A))),
-                  const SizedBox(width: 2),
-                  Icon(Icons.chevron_right, size: 16, color: const Color(0xFFC41E3A)),
-                ],
-              ),
-            ),
           ],
         );
       },

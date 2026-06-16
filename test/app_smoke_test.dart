@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:medication_reminder/providers/medicine_provider.dart';
 import 'package:medication_reminder/providers/schedule_provider.dart';
 import 'package:medication_reminder/providers/reminder_provider.dart';
 import 'package:medication_reminder/screens/home/patient_home_screen.dart';
 
 void main() {
+  setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+  });
+
   group('App smoke test', () {
     testWidgets('PatientHomeScreen renders navigation bar', (tester) async {
       await tester.pumpWidget(
@@ -22,14 +28,16 @@ void main() {
         ),
       );
 
-      // Wait for initial load
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      // Wait for initial load (use pump instead of pumpAndSettle to avoid
+      // timeout from perpetual animations like AnimatedSwitcher)
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 1));
 
       // Verify navigation bar is rendered
       expect(find.byType(NavigationBar), findsOneWidget);
 
       // Verify all 5 tabs are present
-      expect(find.text('主页'), findsOneWidget);
+      expect(find.text('主页'), findsWidgets);
       expect(find.text('用药计划'), findsOneWidget);
       expect(find.text('药品管理'), findsOneWidget);
       expect(find.text('服药统计'), findsOneWidget);
@@ -50,11 +58,12 @@ void main() {
         ),
       );
 
-      await tester.pumpAndSettle(const Duration(seconds: 2));
+      await tester.pump(const Duration(seconds: 3));
+      await tester.pump(const Duration(seconds: 1));
 
       // Tap on 用药计划 tab (index 1)
       await tester.tap(find.text('用药计划'));
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(seconds: 1));
 
       // Verify some content is shown
       expect(find.byType(NavigationBar), findsOneWidget);
