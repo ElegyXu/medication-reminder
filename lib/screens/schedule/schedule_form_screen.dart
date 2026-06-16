@@ -124,25 +124,12 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
     }
   }
 
-  List<Widget> _buildTimePointTiles() {
-    return List.generate(_timePoints.length, (i) {
-      final index = i;
-      return ListTile(
-        key: ValueKey('time_$index'),
-        title: Text(_timePoints[index]),
-        leading: const Icon(Icons.access_time),
-        trailing: _timePoints.length > 1
-            ? IconButton(
-                icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-                onPressed: () => setState(() => _timePoints.removeAt(index)),
-              )
-            : null,
-        onTap: () => _pickTime(index),
-      );
-    });
-  }
-
   Future<void> _pickTime(int index) async {
+    if (!mounted) return;
+
+    // Dismiss keyboard first so showTimePicker can use clean context
+    FocusScope.of(context).unfocus();
+    await Future.delayed(const Duration(milliseconds: 100));
     if (!mounted) return;
 
     TimeOfDay initialTime;
@@ -159,6 +146,9 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
     final picked = await showTimePicker(
       context: context,
       initialTime: initialTime,
+      helpText: '选择用药时间',
+      cancelText: '取消',
+      confirmText: '确定',
     );
 
     if (picked != null && mounted) {
@@ -233,7 +223,39 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                   ),
                 ],
               ),
-              ..._buildTimePointTiles(),
+              const SizedBox(height: 4),
+              ...List.generate(_timePoints.length, (i) {
+                final index = i;
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(12),
+                    onTap: () => _pickTime(index),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      child: Row(
+                        children: [
+                          const Icon(Icons.access_time, size: 22),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              _timePoints[index],
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                            ),
+                          ),
+                          if (_timePoints.length > 1)
+                            IconButton(
+                              icon: const Icon(Icons.remove_circle_outline, color: Colors.red, size: 22),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () => setState(() => _timePoints.removeAt(index)),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
               const SizedBox(height: 8),
             ],
 
@@ -268,35 +290,54 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
             if (_frequency == ScheduleFrequency.monthly) ...[
               Text('选择日期', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 7,
-                  mainAxisSpacing: 4,
-                  crossAxisSpacing: 4,
-                  childAspectRatio: 1.8,
+              SizedBox(
+                height: 280,
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 7,
+                    mainAxisSpacing: 6,
+                    crossAxisSpacing: 6,
+                    childAspectRatio: 1.2,
+                  ),
+                  itemCount: 31,
+                  itemBuilder: (context, i) {
+                    final day = i + 1;
+                    final selected = _selectedMonthDays.contains(day);
+                    return InkWell(
+                      borderRadius: BorderRadius.circular(8),
+                      onTap: () {
+                        setState(() {
+                          if (selected) {
+                            _selectedMonthDays.remove(day);
+                          } else {
+                            _selectedMonthDays.add(day);
+                          }
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: selected
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$day',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: selected
+                                ? Theme.of(context).colorScheme.onPrimary
+                                : Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 ),
-                itemCount: 31,
-                itemBuilder: (context, i) {
-                  final day = i + 1;
-                  final selected = _selectedMonthDays.contains(day);
-                  return FilterChip(
-                    label: Text('$day', style: const TextStyle(fontSize: 13)),
-                    selected: selected,
-                    padding: EdgeInsets.zero,
-                    visualDensity: VisualDensity.compact,
-                    onSelected: (v) {
-                      setState(() {
-                        if (v) {
-                          _selectedMonthDays.add(day);
-                        } else {
-                          _selectedMonthDays.remove(day);
-                        }
-                      });
-                    },
-                  );
-                },
               ),
               const SizedBox(height: 16),
             ],
