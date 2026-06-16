@@ -28,9 +28,6 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
   DateTime? _endDate;
   bool _isEditing = false;
 
-  // Unique keys for time point tiles to avoid index confusion after add/remove
-  final List<GlobalKey> _timePointKeys = [GlobalKey()];
-
   @override
   void initState() {
     super.initState();
@@ -40,11 +37,6 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
       _dosageController.text = s.dosage;
       _frequency = s.frequency;
       _timePoints = List.from(s.timePoints);
-      // Rebuild keys to match loaded time points
-      _timePointKeys.clear();
-      for (int i = 0; i < _timePoints.length; i++) {
-        _timePointKeys.add(GlobalKey());
-      }
       _selectedWeekDays = s.weekDays != null ? List.from(s.weekDays!) : [1];
       _selectedMonthDays = s.monthDays != null ? List.from(s.monthDays!) : [1];
       _startDate = s.startDate;
@@ -133,27 +125,16 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
   }
 
   List<Widget> _buildTimePointTiles() {
-    // Ensure keys list stays in sync with time points
-    while (_timePointKeys.length < _timePoints.length) {
-      _timePointKeys.add(GlobalKey());
-    }
-    while (_timePointKeys.length > _timePoints.length) {
-      _timePointKeys.removeLast();
-    }
-
     return List.generate(_timePoints.length, (i) {
-      final index = i; // stable closure capture
+      final index = i;
       return ListTile(
-        key: _timePointKeys[index],
+        key: ValueKey('time_$index'),
         title: Text(_timePoints[index]),
         leading: const Icon(Icons.access_time),
         trailing: _timePoints.length > 1
             ? IconButton(
                 icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-                onPressed: () => setState(() {
-                  _timePoints.removeAt(index);
-                  _timePointKeys.removeAt(index);
-                }),
+                onPressed: () => setState(() => _timePoints.removeAt(index)),
               )
             : null,
         onTap: () => _pickTime(index),
@@ -162,7 +143,8 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
   }
 
   Future<void> _pickTime(int index) async {
-    // Safely parse the time string; fall back to 08:00 if malformed
+    if (!mounted) return;
+
     TimeOfDay initialTime;
     try {
       final parts = _timePoints[index].split(':');
@@ -177,13 +159,6 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
     final picked = await showTimePicker(
       context: context,
       initialTime: initialTime,
-      builder: (context, child) {
-        // Use 24-hour format for clarity in medication scheduling
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child!,
-        );
-      },
     );
 
     if (picked != null && mounted) {
@@ -251,10 +226,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                   Text('用药时间', style: Theme.of(context).textTheme.titleSmall),
                   TextButton.icon(
                     onPressed: _timePoints.length < 5
-                        ? () => setState(() {
-                              _timePoints.add('12:00');
-                              _timePointKeys.add(GlobalKey());
-                            })
+                        ? () => setState(() => _timePoints.add('12:00'))
                         : null,
                     icon: const Icon(Icons.add, size: 18),
                     label: const Text('添加'),
@@ -296,29 +268,35 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
             if (_frequency == ScheduleFrequency.monthly) ...[
               Text('选择日期', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
-              Wrap(
-                spacing: 4,
-                runSpacing: 4,
-                children: List.generate(31, (i) {
+              GridView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 7,
+                  mainAxisSpacing: 4,
+                  crossAxisSpacing: 4,
+                  childAspectRatio: 1.8,
+                ),
+                itemCount: 31,
+                itemBuilder: (context, i) {
                   final day = i + 1;
                   final selected = _selectedMonthDays.contains(day);
-                  return SizedBox(
-                    width: 40,
-                    child: FilterChip(
-                      label: Text('$day', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13)),
-                      selected: selected,
-                      onSelected: (v) {
-                        setState(() {
-                          if (v) {
-                            _selectedMonthDays.add(day);
-                          } else {
-                            _selectedMonthDays.remove(day);
-                          }
-                        });
-                      },
-                    ),
+                  return FilterChip(
+                    label: Text('$day', style: const TextStyle(fontSize: 13)),
+                    selected: selected,
+                    padding: EdgeInsets.zero,
+                    visualDensity: VisualDensity.compact,
+                    onSelected: (v) {
+                      setState(() {
+                        if (v) {
+                          _selectedMonthDays.add(day);
+                        } else {
+                          _selectedMonthDays.remove(day);
+                        }
+                      });
+                    },
                   );
-                }),
+                },
               ),
               const SizedBox(height: 16),
             ],
