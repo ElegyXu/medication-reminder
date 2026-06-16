@@ -1,0 +1,417 @@
+Resolving dependencies...
+Downloading packages...
+  characters 1.4.0 (1.4.1 available)
+  flutter_lints 5.0.0 (6.0.0 available)
+  flutter_local_notifications 18.0.1 (22.0.1 available)
+  flutter_local_notifications_linux 5.0.0 (8.0.1 available)
+  flutter_local_notifications_platform_interface 8.0.0 (12.0.0 available)
+  flutter_slidable 3.1.2 (4.0.3 available)
+  go_router 14.8.1 (17.3.0 available)
+  lints 5.1.1 (6.1.0 available)
+  matcher 0.12.17 (0.12.20 available)
+  material_color_utilities 0.11.1 (0.13.0 available)
+  meta 1.16.0 (1.18.3 available)
+  package_config 2.2.0 (3.0.0 available)
+  path_provider 2.1.5 (2.1.6 available)
+  path_provider_foundation 2.5.1 (2.6.0 available)
+  path_provider_platform_interface 2.1.2 (2.1.3 available)
+  shared_preferences_android 2.4.23 (2.4.26 available)
+  sqflite 2.4.2 (2.4.3 available)
+  sqflite_android 2.4.2+2 (2.4.3 available)
+  sqflite_common 2.5.6 (2.5.11 available)
+  sqflite_common_ffi 2.3.7+1 (2.4.2 available)
+  sqflite_darwin 2.4.2 (2.4.3 available)
+  sqflite_platform_interface 2.4.0 (2.4.1 available)
+  sqlite3 2.9.4 (3.3.3 available)
+  synchronized 3.4.0 (3.4.1 available)
+  test_api 0.7.6 (0.7.12 available)
+  timezone 0.10.1 (0.11.0 available)
+  vector_math 2.2.0 (2.4.0 available)
+  xml 6.6.1 (7.0.1 available)
+Got dependencies!
+28 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+00:00 +0: loading C:/tmp/med/test/app_smoke_test.dart
+00:00 +0: C:/tmp/med/test/app_smoke_test.dart: (setUpAll)
+00:00 +0: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +1: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +2: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +3: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +4: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +5: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +6: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +7: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +8: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +9: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +10: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +10 -1: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +10 -1: C:/tmp/med/test/database/database_edge_test.dart: 数据库复杂查询 getReminders limit 参数 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: ) sql 'DELETE FROM reminders' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_edge_test.dart 20:22            main.<fn>
+  
+00:00 +10 -2: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +10 -2: C:/tmp/med/test/database/database_edge_test.dart: 数据库复杂查询 跨表关联删除 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?), parameters: m1, 阿莫西林, 胶囊, 500mg, 4291042874, 1, 2026-06-17T02:46:58.096438, 2026-06-17T02:46:58.096438}) DatabaseException(SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?), parameters: m1, 阿莫西林, 胶囊, 500mg, 4291042874, 1, 2026-06-17T02:46:58.096438, 2026-06-17T02:46:58.096438) sql 'INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?)' args [m1, 阿莫西林, 胶囊, 500mg, 4291042874, 1, 2026-06-17T02:46:58.096438, 2026-06-17T02:46:58.096438] {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: ) sql 'DELETE FROM reminders' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_edge_test.dart 20:22            main.<fn>
+  
+00:00 +11 -2: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +12 -2: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +12 -3: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +13 -3: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +14 -3: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +14 -3: C:/tmp/med/test/database/database_helper_test.dart: 药品 CRUD 查询不存在的ID返回null [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: ) sql 'DELETE FROM reminders' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_helper_test.dart 20:22          main.<fn>
+  
+00:00 +15 -3: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +15 -4: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +15 -4: C:/tmp/med/test/database/database_helper_test.dart: 药品 CRUD 按激活状态过滤 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?), parameters: m1, A, 片剂, 500mg, 饭后服用, 4291042874, 1, 2026-06-17T02:46:58.393671, 2026-06-17T02:46:58.393671}) DatabaseException(SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?), parameters: m1, A, 片剂, 500mg, 饭后服用, 4291042874, 1, 2026-06-17T02:46:58.393671, 2026-06-17T02:46:58.393671) sql 'INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)' args [m1, A, 片剂, 500mg, 饭后服用, 4291042874, 1, 2026-06-17T02:46:58.393671, 2026-06-17T02:46:58.393671] {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: ) sql 'DELETE FROM reminders' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_helper_test.dart 20:22          main.<fn>
+  
+00:00 +15 -5: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +15 -5: C:/tmp/med/test/database/database_edge_test.dart: 健壮性 空数据库所有查询不崩溃 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM guardian_bindings, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM guardian_bindings, parameters: ) sql 'DELETE FROM guardian_bindings' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_edge_test.dart 20:22            main.<fn>
+  
+00:00 +15 -6: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +15 -6: C:/tmp/med/test/database/database_helper_test.dart: 药品 CRUD 查询全部药品(不过滤) [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM schedules, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM schedules, parameters: ) sql 'DELETE FROM schedules' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_helper_test.dart 20:22          main.<fn>
+  
+00:00 +15 -7: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:00 +15 -7: C:/tmp/med/test/database/database_edge_test.dart: 健壮性 Medicine toMap 不包含多余字段 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM guardian_bindings, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM guardian_bindings, parameters: ) sql 'DELETE FROM guardian_bindings' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_edge_test.dart 20:22            main.<fn>
+  
+00:01 +16 -7: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +16 -8: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +16 -8: C:/tmp/med/test/database/database_helper_test.dart: 药品 CRUD 删除药品同步删除关联用药计划 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?), parameters: m1, 阿莫西林, 片剂, 500mg, 饭后服用, 4291042874, 1, 2026-06-17T02:46:58.393671, 2026-06-17T02:46:58.393671}) DatabaseException(SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?), parameters: m1, 阿莫西林, 片剂, 500mg, 饭后服用, 4291042874, 1, 2026-06-17T02:46:58.393671, 2026-06-17T02:46:58.393671) sql 'INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)' args [m1, 阿莫西林, 片剂, 500mg, 饭后服用, 4291042874, 1, 2026-06-17T02:46:58.393671, 2026-06-17T02:46:58.393671] {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: ) sql 'DELETE FROM reminders' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_helper_test.dart 20:22          main.<fn>
+  
+00:01 +17 -8: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +17 -9: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +17 -9: C:/tmp/med/test/database/database_helper_test.dart: 药品 CRUD 空药品列表 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM medicines, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM medicines, parameters: ) sql 'DELETE FROM medicines' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_helper_test.dart 20:22          main.<fn>
+  
+00:01 +17 -10: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +17 -10: C:/tmp/med/test/database/database_edge_test.dart: 健壮性 多条症状按时间排序 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM medicines, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM medicines, parameters: ) sql 'DELETE FROM medicines' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_edge_test.dart 20:22            main.<fn>
+  
+00:01 +17 -11: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +17 -11: C:/tmp/med/test/database/database_edge_test.dart: 健壮性 getConsecutiveDays 仅昨天有记录 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO reminders (id, schedule_id, medicine_name, dosage, scheduled_time, status, source, taken_at, created_at) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?), parameters: r1, s1, 药, 1片, 2026-06-16T02:46:58.096438, taken, 2026-06-17T02:46:58.096438}) DatabaseException(SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO reminders (id, schedule_id, medicine_name, dosage, scheduled_time, status, source, taken_at, created_at) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?), parameters: r1, s1, 药, 1片, 2026-06-16T02:46:58.096438, taken, 2026-06-17T02:46:58.096438) sql 'INSERT OR REPLACE INTO reminders (id, schedule_id, medicine_name, dosage, scheduled_time, status, source, taken_at, created_at) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?)' args [r1, s1, 药, 1片, 2026-06-16T02:46:58.096438, taken, 2026-06-17T02:46:58.096438] {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  
+00:01 +17 -12: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +17 -12: C:/tmp/med/test/database/database_helper_test.dart: 药品 CRUD 插入重复ID药品(replace) [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM guardian_bindings, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM guardian_bindings, parameters: ) sql 'DELETE FROM guardian_bindings' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_helper_test.dart 20:22          main.<fn>
+  
+00:01 +17 -13: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +17 -13: C:/tmp/med/test/database/database_helper_test.dart: 药品 CRUD 多药品按updated_at降序排列 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?), parameters: m1, A, 片剂, 1mg, 4291042874, 1, 2026-06-17T02:46:58.393671, 2026-06-15T02:46:58.393671}) DatabaseException(SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?), parameters: m1, A, 片剂, 1mg, 4291042874, 1, 2026-06-17T02:46:58.393671, 2026-06-15T02:46:58.393671) sql 'INSERT OR REPLACE INTO medicines (id, name, dosage_form, specification, notes, color_value, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, NULL, ?, ?, ?, ?)' args [m1, A, 片剂, 1mg, 4291042874, 1, 2026-06-17T02:46:58.393671, 2026-06-15T02:46:58.393671] {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  
+00:01 +18 -13: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +18 -13: C:/tmp/med/test/database/database_helper_test.dart: 药品 CRUD 多药品按updated_at降序排列 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: ) sql 'DELETE FROM reminders' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_helper_test.dart 20:22          main.<fn>
+  
+00:01 +19 -13: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +19 -14: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +19 -14: C:/tmp/med/test/database/database_helper_test.dart: 用药计划 CRUD 插入并查询用药计划 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO schedules (id, medicine_id, medicine_name, dosage, frequency, time_points, week_days, month_days, start_date, end_date, prn_max_daily, prn_min_interval_minutes, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?, NULL, NULL, NULL, ?, ?, ?), parameters: s1, m1, 阿莫西林, 1片, daily, 08:00,20:00, 2026-06-17T00:00:00.000, 1, 2026-06-17T02:46:58.393671, 2026-06-17T02:46:58.393671}) DatabaseException(SqliteException(5): while executing statement, database is locked, database is locked (code 5)
+    Causing statement: INSERT OR REPLACE INTO schedules (id, medicine_id, medicine_name, dosage, frequency, time_points, week_days, month_days, start_date, end_date, prn_max_daily, prn_min_interval_minutes, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?, NULL, NULL, NULL, ?, ?, ?), parameters: s1, m1, 阿莫西林, 1片, daily, 08:00,20:00, 2026-06-17T00:00:00.000, 1, 2026-06-17T02:46:58.393671, 2026-06-17T02:46:58.393671) sql 'INSERT OR REPLACE INTO schedules (id, medicine_id, medicine_name, dosage, frequency, time_points, week_days, month_days, start_date, end_date, prn_max_daily, prn_min_interval_minutes, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, NULL, NULL, ?, NULL, NULL, NULL, ?, ?, ?)' args [s1, m1, 阿莫西林, 1片, daily, 08:00,20:00, 2026-06-17T00:00:00.000, 1, 2026-06-17T02:46:58.393671, 2026-06-17T02:46:58.393671] {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  
+00:01 +19 -15: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +19 -15: C:/tmp/med/test/lunar_calendar_test.dart: LunarCalendar getLunarDate handles today gracefully
+Today lunar: 丙午年五月初三
+00:01 +20 -15: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +20 -15: C:/tmp/med/test/database/database_edge_test.dart: 健壮性 PRN 提醒可以手动触发 [E]
+  SqfliteFfiException(sqlite_error: 5, , SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: }) DatabaseException(SqliteException(5): while executing, database is locked, database is locked (code 5)
+    Causing statement: DELETE FROM reminders, parameters: ) sql 'DELETE FROM reminders' {details: {database: {path: C:\tmp\med\.dart_tool\sqflite_common_ffi\databases\medication_reminder.db, id: 1, readOnly: false, singleInstance: true}}}
+  package:sqflite_common_ffi/src/method_call.dart 125:9  responseToResultOrThrow
+  package:sqflite_common_ffi/src/isolate.dart 35:12      SqfliteIsolate.handle
+  ===== asynchronous gap ===========================
+  dart:async                                             _CustomZone.registerBinaryCallback
+  test\database\database_edge_test.dart 20:22            main.<fn>
+  
+00:01 +20 -15: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +21 -15: C:/tmp/med/test/app_smoke_test.dart: App smoke test PatientHomeScreen renders navigation bar
+00:01 +22 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +23 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +24 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +25 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +26 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +27 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +28 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +29 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +30 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +31 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +32 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +33 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +34 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +35 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +36 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +37 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +38 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +39 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +40 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +41 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +42 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +43 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +44 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +45 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +46 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +47 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +48 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +49 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +50 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +51 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +52 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +53 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +54 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +55 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +56 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +57 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +58 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +59 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +60 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +61 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +62 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +63 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +64 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:01 +65 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:02 +66 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout SliverAppBar structure: scroll, appbar, padding, navbar
+00:02 +67 -15: C:/tmp/med/test/database/database_helper_test.dart: 家属绑定 CRUD 更新绑定状态
+00:02 +68 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout FlexibleSpaceBar gradient and safety shield icon
+00:02 +69 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout FlexibleSpaceBar gradient and safety shield icon
+00:02 +70 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout FlexibleSpaceBar gradient and safety shield icon
+00:02 +71 -15: C:/tmp/med/test/home_screen_layout_test.dart: Home screen SliverAppBar layout FlexibleSpaceBar gradient and safety shield icon
+00:02 +72 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 无记录返回0
+00:02 +73 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 单天记录返回1
+00:02 +74 -15: C:/tmp/med/test/models/models_full_test.dart: Medicine 模型 toMap 序列化正确
+00:02 +75 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 连续多天
+00:02 +76 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 连续多天
+00:02 +77 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 连续多天
+00:02 +78 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 连续多天
+00:02 +79 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 连续多天
+00:02 +80 -15: C:/tmp/med/test/models/models_full_test.dart: Medicine 模型 copyWith 全部字段
+00:02 +81 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 有间断
+00:02 +82 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 有间断
+00:02 +83 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 有间断
+00:02 +84 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 有间断
+00:02 +85 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 有间断
+00:02 +86 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 有间断
+00:02 +87 -15: C:/tmp/med/test/database/database_helper_test.dart: 统计数据 getConsecutiveDays 有间断
+00:02 +88 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品名含特殊字符
+00:02 +89 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品名含特殊字符
+00:02 +90 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品名含特殊字符
+00:02 +91 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品名含特殊字符
+00:02 +92 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品名含特殊字符
+00:02 +93 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品名含特殊字符
+00:02 +94 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品名含特殊字符
+00:02 +95 -15: C:/tmp/med/test/models/models_full_test.dart: MedicationSchedule 模型 toMap→fromMap 往返一致性（weekly）
+00:02 +96 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品备注为空
+00:02 +97 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品备注为空
+00:02 +98 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品备注为空
+00:02 +99 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品备注为空
+00:02 +100 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 药品备注为空
+00:02 +101 -15: C:/tmp/med/test/models/models_full_test.dart: Reminder 模型 fromMap 反序列化正确
+00:02 +102 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 用药计划含多个时间点
+00:02 +103 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 用药计划含多个时间点
+00:02 +104 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 用药计划含多个时间点
+00:02 +105 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 用药计划含多个时间点
+00:02 +106 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 用药计划含多个时间点
+00:02 +107 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 用药计划含多个时间点
+00:02 +108 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 用药计划含多个时间点
+00:02 +109 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 用药计划含多个时间点
+00:02 +110 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值1
+00:02 +111 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值1
+00:02 +112 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值1
+00:02 +113 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值1
+00:02 +114 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值1
+00:02 +115 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值1
+00:02 +116 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值1
+00:02 +117 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值1
+00:02 +118 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值1
+00:02 +119 -15: C:/tmp/med/test/models/models_full_test.dart: GuardianBinding 模型 statusLabel 四种状态
+00:02 +120 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值5
+00:02 +121 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值5
+00:02 +122 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值5
+00:02 +123 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 症状严重度为边界值5
+00:02 +124 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 所有绑定状态枚举
+00:02 +125 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 删除不存在的记录不抛异常
+00:02 +126 -15: C:/tmp/med/test/database/database_helper_test.dart: 边界用例 批量插入空列表
+00:02 +127 -15: C:/tmp/med/test/models/symptom_model_test.dart: Symptom model fromMap with all fields
+00:02 +128 -15: C:/tmp/med/test/models/symptom_model_test.dart: Symptom model fromMap with minimal fields (nullable null)
+00:02 +129 -15: C:/tmp/med/test/models/symptom_model_test.dart: Symptom model toMap produces correct map
+00:02 +130 -15: C:/tmp/med/test/models/symptom_model_test.dart: Symptom model severityLabel returns correct labels
+00:02 +131 -15: C:/tmp/med/test/providers/providers_test.dart: (setUpAll)
+00:02 +131 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider 初始状态为空
+00:02 +132 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider 添加药品后列表包含该药品
+00:02 +133 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider 添加多个药品
+00:02 +134 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider 添加药品含备注
+00:02 +135 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider 更新药品信息
+00:02 +136 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider 切换药品激活状态
+00:03 +137 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider 删除药品
+00:03 +138 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider loadMedicines 刷新列表
+00:03 +139 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider activeMedicines 仅返回活动药品
+00:03 +140 -15: C:/tmp/med/test/providers/providers_test.dart: MedicineProvider 添加自定义颜色药品
+00:03 +141 -15: C:/tmp/med/test/providers/providers_test.dart: ScheduleProvider 初始状态为空
+00:03 +142 -15: C:/tmp/med/test/providers/providers_test.dart: ScheduleProvider 添加每日计划
+00:03 +143 -15: C:/tmp/med/test/providers/providers_test.dart: ScheduleProvider 添加每周计划
+00:03 +144 -15: C:/tmp/med/test/providers/providers_test.dart: ScheduleProvider 添加每月计划
+00:03 +145 -15: C:/tmp/med/test/providers/providers_test.dart: ScheduleProvider 添加 PRN 按需计划
+00:03 +146 -15: C:/tmp/med/test/providers/providers_test.dart: ScheduleProvider 切换计划激活状态
+00:03 +147 -15: C:/tmp/med/test/providers/providers_test.dart: ScheduleProvider 删除计划
+00:03 +148 -15: C:/tmp/med/test/providers/providers_test.dart: ScheduleProvider 更新计划信息
+00:03 +149 -15: C:/tmp/med/test/providers/providers_test.dart: ScheduleProvider activeSchedules 仅返回活动的
+00:03 +150 -15: C:/tmp/med/test/providers/provider_edge_test.dart: (setUpAll)
+00:03 +151 -15: C:/tmp/med/test/providers/provider_edge_test.dart: (setUpAll)
+00:03 +152 -15: C:/tmp/med/test/providers/provider_edge_test.dart: (setUpAll)
+00:03 +153 -15: C:/tmp/med/test/providers/provider_edge_test.dart: (setUpAll)
+00:03 +154 -15: C:/tmp/med/test/providers/provider_edge_test.dart: (setUpAll)
+00:03 +154 -15: C:/tmp/med/test/providers/providers_test.dart: ReminderProvider todayStats 默认值
+00:03 +155 -15: C:/tmp/med/test/providers/provider_edge_test.dart: MedicineProvider 边界 并发添加多个药品
+00:03 +156 -15: C:/tmp/med/test/providers/provider_edge_test.dart: MedicineProvider 边界 删除后重新添加同名药品
+00:03 +157 -15: C:/tmp/med/test/reminder_model_test.dart: Reminder model fromMap creates pending reminder
+00:03 +158 -15: C:/tmp/med/test/providers/provider_edge_test.dart: MedicineProvider 边界 切换两次激活状态回到原位
+00:03 +159 -15: C:/tmp/med/test/providers/provider_edge_test.dart: MedicineProvider 边界 切换两次激活状态回到原位
+00:03 +160 -15: C:/tmp/med/test/providers/provider_edge_test.dart: MedicineProvider 边界 切换两次激活状态回到原位
+00:03 +161 -15: C:/tmp/med/test/providers/provider_edge_test.dart: MedicineProvider 边界 切换两次激活状态回到原位
+00:03 +162 -15: C:/tmp/med/test/providers/provider_edge_test.dart: MedicineProvider 边界 空药品列表 activeMedicines 也为空
+00:03 +163 -15: C:/tmp/med/test/providers/provider_edge_test.dart: MedicineProvider 边界 isLoading 状态切换
+00:03 +164 -15: C:/tmp/med/test/providers/provider_edge_test.dart: MedicineProvider 边界 addMedicine 后 medicines 和 activeMedicines 同步更新
+00:03 +165 -15: C:/tmp/med/test/providers/provider_edge_test.dart: ScheduleProvider 边界 添加计划含结束日期
+00:03 +166 -15: C:/tmp/med/test/providers/provider_edge_test.dart: ScheduleProvider 边界 更新计划激活状态后刷新
+00:03 +167 -15: C:/tmp/med/test/providers/provider_edge_test.dart: ScheduleProvider 边界 PRN 计划不包含时间点
+00:03 +168 -15: C:/tmp/med/test/providers/provider_edge_test.dart: ScheduleProvider 边界 删除后列表为空
+00:03 +169 -15: C:/tmp/med/test/providers/provider_edge_test.dart: ReminderProvider 边界 空列表依从率 0%
+00:03 +170 -15: C:/tmp/med/test/providers/provider_edge_test.dart: ReminderProvider 边界 无提醒时连续天数为 0
+00:03 +171 -15: C:/tmp/med/test/providers/provider_edge_test.dart: ReminderProvider 边界 loadTodayReminders 不崩溃
+00:03 +172 -15: C:/tmp/med/test/schedule_model_test.dart: MedicationSchedule model fromMap creates daily schedule correctly
+00:03 +173 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 添加药品→创建计划→生成提醒完整流程
+00:03 +174 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 添加药品→创建计划→生成提醒完整流程
+00:03 +175 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 添加药品→创建计划→生成提醒完整流程
+00:03 +176 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 添加药品→创建计划→生成提醒完整流程
+00:03 +177 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 添加药品→创建计划→生成提醒完整流程
+00:03 +178 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 生成提醒后打卡
+00:03 +179 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 跳过服药
+00:03 +180 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 重复生成提醒不会重复插入
+00:03 +181 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 停用计划不生成提醒
+00:03 +182 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 MedicineProvider 重复加载数据幂等
+00:03 +183 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 ScheduleProvider 重复加载数据幂等
+00:03 +184 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 ReminderProvider todayReminders 默认空
+00:03 +185 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 添加药品后 isActive 默认为 true
+00:03 +186 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 ScheduleProvider 初始 loading 状态
+00:03 +187 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 添加相同名称药品不冲突
+00:03 +188 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 多个时间点计划全部生成提醒
+00:03 +189 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 takeMedicine 后状态变为 taken
+00:03 +190 -15: C:/tmp/med/test/providers/provider_edge_test.dart: 跨 Provider 集成 skipMedicine 后状态变为 skipped
+00:03 +191 -15: C:/tmp/med/test/providers/provider_edge_test.dart: (tearDownAll)
+00:03 +191 -15: Some tests failed.

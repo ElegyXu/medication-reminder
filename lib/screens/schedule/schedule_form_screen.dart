@@ -109,9 +109,13 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
   Future<void> _pickDate({required bool isStart}) async {
     final picked = await showDatePicker(
       context: context,
+      locale: const Locale('zh'),
       initialDate: isStart ? _startDate : (_endDate ?? _startDate),
       firstDate: DateTime(2020),
       lastDate: DateTime(2030),
+      helpText: '选择日期',
+      cancelText: '取消',
+      confirmText: '确定',
     );
     if (picked != null) {
       setState(() {
@@ -124,37 +128,49 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
     }
   }
 
-  Future<void> _pickTime(int index) async {
-    if (!mounted) return;
-
-    // Dismiss keyboard first so showTimePicker can use clean context
+  /// 先弹出时间选择器，选完后再添加到列表
+  Future<void> _addTimePoint() async {
     FocusScope.of(context).unfocus();
-    await Future.delayed(const Duration(milliseconds: 100));
-    if (!mounted) return;
 
-    TimeOfDay initialTime;
-    try {
-      final parts = _timePoints[index].split(':');
-      initialTime = TimeOfDay(
-        hour: int.parse(parts[0]),
-        minute: int.parse(parts[1]),
-      );
-    } catch (_) {
-      initialTime = const TimeOfDay(hour: 8, minute: 0);
-    }
-
-    final picked = await showTimePicker(
+    final result = await showModalBottomSheet<String>(
       context: context,
-      initialTime: initialTime,
-      helpText: '选择用药时间',
-      cancelText: '取消',
-      confirmText: '确定',
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => const _TimePickerSheet(initialHour: 8, initialMinute: 0),
     );
 
-    if (picked != null && mounted) {
+    if (result != null && mounted) {
       setState(() {
-        _timePoints[index] =
-            '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
+        _timePoints.add(result);
+      });
+    }
+  }
+
+  Future<void> _pickTime(int index) async {
+    FocusScope.of(context).unfocus();
+
+    final parts = _timePoints[index].split(':');
+    int hour = 8;
+    int minute = 0;
+    try {
+      hour = int.parse(parts[0]);
+      minute = int.parse(parts[1]);
+    } catch (_) {}
+
+    final result = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) => _TimePickerSheet(initialHour: hour, initialMinute: minute),
+    );
+
+    if (result != null && mounted) {
+      setState(() {
+        _timePoints[index] = result;
       });
     }
   }
@@ -167,6 +183,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
         key: _formKey,
         child: ListView(
           padding: const EdgeInsets.all(16),
+          clipBehavior: Clip.none,
           children: [
             // 药品选择
             Consumer<MedicineProvider>(
@@ -174,6 +191,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                 initialValue: _selectedMedicine,
                 decoration: const InputDecoration(labelText: '关联药品'),
                 hint: const Text('请选择药品'),
+                validator: (v) => v == null ? '必须选择药品' : null,
                 items: mp.activeMedicines.map((m) =>
                   DropdownMenuItem(value: m, child: Text('${m.name} (${m.specification})'))
                 ).toList(),
@@ -215,9 +233,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                 children: [
                   Text('用药时间', style: Theme.of(context).textTheme.titleSmall),
                   TextButton.icon(
-                    onPressed: _timePoints.length < 5
-                        ? () => setState(() => _timePoints.add('12:00'))
-                        : null,
+                    onPressed: _timePoints.length < 5 ? _addTimePoint : null,
                     icon: const Icon(Icons.add, size: 18),
                     label: const Text('添加'),
                   ),
@@ -263,25 +279,30 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
             if (_frequency == ScheduleFrequency.weekly) ...[
               Text('选择星期', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
-              Wrap(
-                spacing: 6,
-                children: List.generate(7, (i) {
-                  final day = i + 1;
-                  final selected = _selectedWeekDays.contains(day);
-                  return FilterChip(
-                    label: Text(['', '一', '二', '三', '四', '五', '六', '日'][day]),
-                    selected: selected,
-                    onSelected: (v) {
-                      setState(() {
-                        if (v) {
-                          _selectedWeekDays.add(day);
-                        } else {
-                          _selectedWeekDays.remove(day);
-                        }
-                      });
-                    },
-                  );
-                }),
+              SizedBox(
+                height: 48,
+                child: Row(
+                  children: List.generate(7, (i) {
+                    final day = i + 1;
+                    final selected = _selectedWeekDays.contains(day);
+                    const labels = ['一', '二', '三', '四', '五', '六', '日'];
+                    return Expanded(
+                      child: _DayCell(
+                        label: labels[i],
+                        selected: selected,
+                        onTap: () {
+                          setState(() {
+                            if (selected) {
+                              _selectedWeekDays.remove(day);
+                            } else {
+                              _selectedWeekDays.add(day);
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  }),
+                ),
               ),
               const SizedBox(height: 16),
             ],
@@ -290,9 +311,14 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
             if (_frequency == ScheduleFrequency.monthly) ...[
               Text('选择日期', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
-              SizedBox(
-                height: 280,
-                child: GridView.builder(
+              LayoutBuilder(
+                builder: (ctx, constraints) {
+                  final cellW = (constraints.maxWidth - 6 * 6) / 7;
+                  final cellH = cellW / 1.2;
+                  final totalH = cellH * 5 + 6 * 4;
+                  return SizedBox(
+                    height: totalH,
+                    child: GridView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -302,11 +328,12 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                     childAspectRatio: 1.2,
                   ),
                   itemCount: 31,
-                  itemBuilder: (context, i) {
+                  itemBuilder: (ctx, i) {
                     final day = i + 1;
                     final selected = _selectedMonthDays.contains(day);
-                    return InkWell(
-                      borderRadius: BorderRadius.circular(8),
+                    return _DayCell(
+                      label: '$day',
+                      selected: selected,
                       onTap: () {
                         setState(() {
                           if (selected) {
@@ -316,28 +343,11 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                           }
                         });
                       },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: selected
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '$day',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: selected
-                                ? Theme.of(context).colorScheme.onPrimary
-                                : Theme.of(context).colorScheme.onSurface,
-                          ),
-                        ),
-                      ),
                     );
                   },
-                ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 16),
             ],
@@ -426,6 +436,154 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// ── Shared day cell for weekly & monthly ──
+class _DayCell extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  const _DayCell({required this.label, required this.selected, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return InkWell(
+      borderRadius: BorderRadius.circular(8),
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.all(2),
+        decoration: BoxDecoration(
+          color: selected ? cs.primary : cs.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: selected ? cs.onPrimary : cs.onSurface,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Custom time picker bottom sheet ──
+class _TimePickerSheet extends StatefulWidget {
+  final int initialHour;
+  final int initialMinute;
+  const _TimePickerSheet({required this.initialHour, required this.initialMinute});
+
+  @override
+  State<_TimePickerSheet> createState() => _TimePickerSheetState();
+}
+
+class _TimePickerSheetState extends State<_TimePickerSheet> {
+  late int _hour;
+  late int _minute;
+  final _hourCtrl = FixedExtentScrollController();
+  final _minuteCtrl = FixedExtentScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    _hour = widget.initialHour;
+    _minute = widget.initialMinute;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _hourCtrl.jumpToItem(_hour);
+      _minuteCtrl.jumpToItem(_minute);
+    });
+  }
+
+  @override
+  void dispose() {
+    _hourCtrl.dispose();
+    _minuteCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.only(top: 12, bottom: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Title bar
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('取消'),
+                ),
+                Text('选择用药时间', style: Theme.of(context).textTheme.titleMedium),
+                TextButton(
+                  onPressed: () {
+                    final t = '${_hour.toString().padLeft(2, '0')}:${_minute.toString().padLeft(2, '0')}';
+                    Navigator.pop(context, t);
+                  },
+                  child: const Text('确定'),
+                ),
+              ],
+            ),
+            const Divider(),
+            // Pickers
+            SizedBox(
+              height: 200,
+              child: Row(
+                children: [
+                  Expanded(child: _buildPicker(24, _hourCtrl, (v) => _hour = v, _hour)),
+                  _buildColon(cs),
+                  Expanded(child: _buildPicker(60, _minuteCtrl, (v) => _minute = v, _minute)),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildColon(ColorScheme cs) {
+    return SizedBox(
+      width: 32,
+      child: Center(
+        child: Text(':', style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: cs.onSurface)),
+      ),
+    );
+  }
+
+  Widget _buildPicker(int count, FixedExtentScrollController ctrl, ValueChanged<int> onChanged, int current) {
+    return ListWheelScrollView.useDelegate(
+      controller: ctrl,
+      itemExtent: 48,
+      physics: const FixedExtentScrollPhysics(),
+      overAndUnderCenterOpacity: 0.3,
+      perspective: 0.002,
+      onSelectedItemChanged: onChanged,
+      childDelegate: ListWheelChildBuilderDelegate(
+        builder: (ctx, i) => Center(
+          child: Text(
+            i.toString().padLeft(2, '0'),
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w600,
+              color: i == current
+                  ? Theme.of(ctx).colorScheme.primary
+                  : Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.5),
+            ),
+          ),
+        ),
+        childCount: count,
       ),
     );
   }
