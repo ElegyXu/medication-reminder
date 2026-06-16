@@ -28,6 +28,9 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
   DateTime? _endDate;
   bool _isEditing = false;
 
+  // Unique keys for time point tiles to avoid index confusion after add/remove
+  final List<GlobalKey> _timePointKeys = [GlobalKey()];
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +40,11 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
       _dosageController.text = s.dosage;
       _frequency = s.frequency;
       _timePoints = List.from(s.timePoints);
+      // Rebuild keys to match loaded time points
+      _timePointKeys.clear();
+      for (int i = 0; i < _timePoints.length; i++) {
+        _timePointKeys.add(GlobalKey());
+      }
       _selectedWeekDays = s.weekDays != null ? List.from(s.weekDays!) : [1];
       _selectedMonthDays = s.monthDays != null ? List.from(s.monthDays!) : [1];
       _startDate = s.startDate;
@@ -124,15 +132,61 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
     }
   }
 
+  List<Widget> _buildTimePointTiles() {
+    // Ensure keys list stays in sync with time points
+    while (_timePointKeys.length < _timePoints.length) {
+      _timePointKeys.add(GlobalKey());
+    }
+    while (_timePointKeys.length > _timePoints.length) {
+      _timePointKeys.removeLast();
+    }
+
+    return List.generate(_timePoints.length, (i) {
+      final index = i; // stable closure capture
+      return ListTile(
+        key: _timePointKeys[index],
+        title: Text(_timePoints[index]),
+        leading: const Icon(Icons.access_time),
+        trailing: _timePoints.length > 1
+            ? IconButton(
+                icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
+                onPressed: () => setState(() {
+                  _timePoints.removeAt(index);
+                  _timePointKeys.removeAt(index);
+                }),
+              )
+            : null,
+        onTap: () => _pickTime(index),
+      );
+    });
+  }
+
   Future<void> _pickTime(int index) async {
+    // Safely parse the time string; fall back to 08:00 if malformed
+    TimeOfDay initialTime;
+    try {
+      final parts = _timePoints[index].split(':');
+      initialTime = TimeOfDay(
+        hour: int.parse(parts[0]),
+        minute: int.parse(parts[1]),
+      );
+    } catch (_) {
+      initialTime = const TimeOfDay(hour: 8, minute: 0);
+    }
+
     final picked = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay(
-        hour: int.parse(_timePoints[index].split(':')[0]),
-        minute: int.parse(_timePoints[index].split(':')[1]),
-      ),
+      initialTime: initialTime,
+      builder: (context, child) {
+        // Use 24-hour format for clarity in medication scheduling
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+          child: child!,
+        );
+      },
     );
-    if (picked != null) {
+
+    if (picked != null && mounted) {
       setState(() {
         _timePoints[index] =
             '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
@@ -197,24 +251,17 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                   Text('用药时间', style: Theme.of(context).textTheme.titleSmall),
                   TextButton.icon(
                     onPressed: _timePoints.length < 5
-                        ? () => setState(() => _timePoints.add('12:00'))
+                        ? () => setState(() {
+                              _timePoints.add('12:00');
+                              _timePointKeys.add(GlobalKey());
+                            })
                         : null,
                     icon: const Icon(Icons.add, size: 18),
                     label: const Text('添加'),
                   ),
                 ],
               ),
-              ...List.generate(_timePoints.length, (i) => ListTile(
-                title: Text(_timePoints[i]),
-                leading: const Icon(Icons.access_time),
-                trailing: _timePoints.length > 1
-                    ? IconButton(
-                        icon: const Icon(Icons.remove_circle_outline, color: Colors.red),
-                        onPressed: () => setState(() => _timePoints.removeAt(i)),
-                      )
-                    : null,
-                onTap: () => _pickTime(i),
-              )),
+              ..._buildTimePointTiles(),
               const SizedBox(height: 8),
             ],
 
@@ -250,22 +297,26 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
               Text('选择日期', style: Theme.of(context).textTheme.titleSmall),
               const SizedBox(height: 8),
               Wrap(
-                spacing: 6,
+                spacing: 4,
+                runSpacing: 4,
                 children: List.generate(31, (i) {
                   final day = i + 1;
                   final selected = _selectedMonthDays.contains(day);
-                  return FilterChip(
-                    label: Text('$day'),
-                    selected: selected,
-                    onSelected: (v) {
-                      setState(() {
-                        if (v) {
-                          _selectedMonthDays.add(day);
-                        } else {
-                          _selectedMonthDays.remove(day);
-                        }
-                      });
-                    },
+                  return SizedBox(
+                    width: 40,
+                    child: FilterChip(
+                      label: Text('$day', textAlign: TextAlign.center, style: const TextStyle(fontSize: 13)),
+                      selected: selected,
+                      onSelected: (v) {
+                        setState(() {
+                          if (v) {
+                            _selectedMonthDays.add(day);
+                          } else {
+                            _selectedMonthDays.remove(day);
+                          }
+                        });
+                      },
+                    ),
                   );
                 }),
               ),
