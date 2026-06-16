@@ -35,6 +35,10 @@ class _GuardianHomeScreenState extends State<GuardianHomeScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         title: const Text('添加家属绑定'),
         content: Column(
           mainAxisSize: MainAxisSize.min,
@@ -64,7 +68,7 @@ class _GuardianHomeScreenState extends State<GuardianHomeScreen> {
         ),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-          ElevatedButton(
+          FilledButton(
             onPressed: () async {
               final phone = phoneController.text.trim();
               final nickname = nicknameController.text.trim();
@@ -96,18 +100,24 @@ class _GuardianHomeScreenState extends State<GuardianHomeScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         title: const Text('解除绑定'),
         content: Text('确定解除与「${binding.patientNickname}」的绑定吗？'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-          TextButton(
+          FilledButton(
             onPressed: () async {
               await _db.deleteBinding(binding.id);
               if (!context.mounted) return;
               Navigator.pop(ctx);
               _loadBindings();
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('解除'),
           ),
         ],

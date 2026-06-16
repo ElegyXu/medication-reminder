@@ -33,6 +33,10 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
       context: context,
       builder: (ctx) => StatefulBuilder(
         builder: (ctx, setDialogState) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(28),
+          ),
+          backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
           title: const Text('记录症状'),
           content: SingleChildScrollView(
             child: Column(
@@ -91,7 +95,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
           ),
           actions: [
             TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-            ElevatedButton(
+            FilledButton(
               onPressed: () async {
                 if (nameController.text.trim().isEmpty) return;
                 await context.read<SymptomProvider>().addSymptom(

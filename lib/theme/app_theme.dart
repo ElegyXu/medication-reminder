@@ -97,7 +97,15 @@ class AppTheme {
         contentTextStyle: const TextStyle(color: Colors.white),
       ),
       dialogTheme: DialogThemeData(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+        backgroundColor: colorScheme.surfaceContainerHigh,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: colorScheme.surfaceContainerLow,
+        dragHandleColor: colorScheme.onSurfaceVariant,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+        ),
       ),
       chipTheme: ChipThemeData(
         shape: RoundedRectangleBorder(

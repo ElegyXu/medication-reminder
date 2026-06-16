@@ -14,11 +14,12 @@ class ReminderBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 28, 20, 36),
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerLow,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -28,7 +29,7 @@ class ReminderBottomSheet extends StatelessWidget {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.grey.shade300,
+              color: cs.onSurfaceVariant,
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -41,12 +42,12 @@ class ReminderBottomSheet extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE8F5E9),
+                  color: cs.primaryContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.medication,
-                  color: Color(0xFF4CAF50),
+                  color: cs.onPrimaryContainer,
                   size: 28,
                 ),
               ),
@@ -57,19 +58,16 @@ class ReminderBottomSheet extends StatelessWidget {
                   children: [
                     Text(
                       reminder.medicineName,
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF333333),
-                      ),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            color: cs.onSurface,
+                          ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       reminder.dosage,
-                      style: TextStyle(
-                        fontSize: 15,
-                        color: Colors.grey.shade500,
-                      ),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: cs.onSurfaceVariant,
+                          ),
                     ),
                   ],
                 ),
@@ -78,22 +76,20 @@ class ReminderBottomSheet extends StatelessWidget {
           ),
           const SizedBox(height: 28),
 
-          // 操作按钮
           // 确认用药 - 全宽主按钮
           SizedBox(
             width: double.infinity,
             height: 52,
-            child: ElevatedButton.icon(
+            child: FilledButton.icon(
               onPressed: () async {
                 Navigator.pop(context);
                 await provider.takeMedicine(reminder);
               },
               icon: const Icon(Icons.check, size: 22),
               label: const Text('确认用药', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF6B35),
-                foregroundColor: Colors.white,
-                elevation: 0,
+              style: FilledButton.styleFrom(
+                backgroundColor: cs.primary,
+                foregroundColor: cs.onPrimary,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
               ),
             ),
@@ -107,6 +103,7 @@ class ReminderBottomSheet extends StatelessWidget {
                 child: _ActionButton(
                   icon: Icons.schedule,
                   label: '延迟 15 分钟',
+                  color: cs.primary,
                   onTap: () async {
                     Navigator.pop(context);
                     await provider.delayMedicine(reminder);
@@ -118,6 +115,7 @@ class ReminderBottomSheet extends StatelessWidget {
                 child: _ActionButton(
                   icon: Icons.close,
                   label: '跳过本次',
+                  color: cs.error,
                   onTap: () async {
                     Navigator.pop(context);
                     await provider.skipMedicine(reminder);
@@ -136,11 +134,13 @@ class _ActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final Color color;
 
   const _ActionButton({
     required this.icon,
     required this.label,
     required this.onTap,
+    required this.color,
   });
 
   @override
@@ -152,8 +152,8 @@ class _ActionButton extends StatelessWidget {
         icon: Icon(icon, size: 18),
         label: Text(label, style: const TextStyle(fontSize: 13)),
         style: OutlinedButton.styleFrom(
-          foregroundColor: const Color(0xFFFF6B35),
-          side: const BorderSide(color: Color(0xFFFF6B35), width: 1.2),
+          foregroundColor: color,
+          side: BorderSide(color: color, width: 1.2),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         ),
       ),

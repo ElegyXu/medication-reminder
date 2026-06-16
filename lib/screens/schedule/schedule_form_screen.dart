@@ -171,9 +171,6 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
     final result = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (_) => const _TimePickerSheet(initialHour: 8, initialMinute: 0),
     );
 
@@ -198,9 +195,6 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
     final result = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (_) => _TimePickerSheet(initialHour: hour, initialMinute: minute),
     );
 

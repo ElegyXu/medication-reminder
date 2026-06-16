@@ -983,7 +983,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
                     builder: (_) => ReminderBottomSheet(
                       reminder: reminder,
                       provider: context.read<ReminderProvider>(),
@@ -1226,9 +1225,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   void _showQuickActions(BuildContext context) {
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
       builder: (ctx) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
@@ -1238,18 +1234,24 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               Container(
                 width: 40, height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
               const SizedBox(height: 16),
               ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.add)),
+                leading: CircleAvatar(
+                  backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                  child: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimaryContainer),
+                ),
                 title: const Text('添加药品'),
                 onTap: () { Navigator.pop(ctx); _navigateToMedicineForm(context); },
               ),
               ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.schedule)),
+                leading: CircleAvatar(
+                  backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+                  child: Icon(Icons.schedule, color: Theme.of(context).colorScheme.onSecondaryContainer),
+                ),
                 title: const Text('新建用药计划'),
                 onTap: () {
                   Navigator.pop(ctx);
@@ -1257,7 +1259,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 },
               ),
               ListTile(
-                leading: const CircleAvatar(child: Icon(Icons.edit_note)),
+                leading: CircleAvatar(
+                  backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
+                  child: Icon(Icons.edit_note, color: Theme.of(context).colorScheme.onTertiaryContainer),
+                ),
                 title: const Text('记录症状'),
                 onTap: () {
                   Navigator.pop(ctx);
@@ -1284,16 +1289,22 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         title: const Text('删除药品'),
         content: Text('确定要删除「${medicine.name}」吗？关联的用药计划也会被删除。'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-          TextButton(
+          FilledButton(
             onPressed: () {
               context.read<MedicineProvider>().removeMedicine(medicine.id);
               Navigator.pop(ctx);
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('删除'),
           ),
         ],

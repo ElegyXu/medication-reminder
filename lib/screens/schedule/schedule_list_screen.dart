@@ -485,16 +485,22 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(28),
+        ),
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
         title: const Text('删除计划'),
         content: Text('确定要删除「${schedule.medicineName}」的用药计划吗？'),
         actions: [
           TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('取消')),
-          TextButton(
+          FilledButton(
             onPressed: () {
               provider.removeSchedule(schedule.id);
               Navigator.pop(ctx);
             },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
             child: const Text('删除'),
           ),
         ],
