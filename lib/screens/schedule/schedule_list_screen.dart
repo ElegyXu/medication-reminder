@@ -83,7 +83,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
             children: [
               _buildSearchBar(),
               const SizedBox(height: 12),
-              _buildSafetyCard(),
+              _buildSafetyCard(reminderProvider),
               const SizedBox(height: 12),
               ...scheduleProvider.schedules.map((s) {
                 final reminders = remindersByMedicine[s.medicineName] ?? [];
@@ -137,11 +137,36 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
   // ========================
   // 安全检测卡片
   // ========================
-  Widget _buildSafetyCard() {
+  Widget _buildSafetyCard(ReminderProvider rp) {
+    final adherence = rp.todayAdherence;
+    final taken = rp.todayStats['taken'] ?? 0;
+    final total = rp.todayStats['total'] ?? 0;
+    final skipped = rp.todayReminders.where((r) => r.status == ReminderStatus.skipped).length;
+
+    final bool hasIssues = total > 0 && (adherence < 0.8 || skipped > 0);
+    final Color bgColor = hasIssues ? Colors.orange.shade50 : Colors.green.shade50;
+    final Color iconBg = hasIssues ? Colors.orange.shade100 : Colors.green.shade100;
+    final Color iconColor = hasIssues ? Colors.orange.shade700 : Colors.green.shade700;
+    final Color badgeBg = hasIssues ? Colors.orange.shade200 : Colors.green.shade200;
+    final Color badgeColor = hasIssues ? Colors.orange.shade800 : Colors.green.shade800;
+
+    String statusText;
+    if (total == 0) {
+      statusText = '今日无用药计划';
+    } else if (adherence >= 1.0) {
+      statusText = '今日已全部按时服药';
+    } else if (adherence >= 0.8) {
+      statusText = '今日依从性良好';
+    } else if (skipped > 0) {
+      statusText = '有 $skipped 次未服药';
+    } else {
+      statusText = '有 ${total - taken} 次待完成';
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.green.shade50,
+        color: bgColor,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -149,33 +174,33 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.green.shade100,
+              color: iconBg,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.shield, color: Colors.green.shade700, size: 22),
+            child: Icon(Icons.shield, color: iconColor, size: 22),
           ),
           const SizedBox(width: 12),
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('智能用药安全', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-                Text('库存充足 · 无相互作用', style: TextStyle(fontSize: 13, color: Colors.grey)),
-              ],
+          Expanded(
+            child: Text(
+              statusText,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.green.shade200,
+              color: badgeBg,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text('监控中', style: TextStyle(color: Colors.green.shade800, fontSize: 12, fontWeight: FontWeight.w500)),
+                Text(
+                  hasIssues ? '需关注' : '监控中',
+                  style: TextStyle(color: badgeColor, fontSize: 12, fontWeight: FontWeight.w500),
+                ),
                 const SizedBox(width: 2),
-                Icon(Icons.chevron_right, size: 16, color: Colors.green.shade700),
+                Icon(Icons.chevron_right, size: 16, color: badgeColor),
               ],
             ),
           ),

@@ -45,7 +45,19 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
       _prnIntervalController.text = s.prnMinIntervalMinutes?.toString() ?? '';
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<MedicineProvider>().loadMedicines();
+      final mp = context.read<MedicineProvider>();
+      mp.loadMedicines().then((_) {
+        if (!mounted) return;
+        // 编辑时预选已有药品
+        if (_isEditing && _selectedMedicine == null) {
+          final medicineId = widget.schedule!.medicineId;
+          setState(() {
+            _selectedMedicine = mp.activeMedicines
+                .where((m) => m.id == medicineId)
+                .firstOrNull;
+          });
+        }
+      });
     });
   }
 
@@ -59,13 +71,8 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedMedicine == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请选择药品')),
-      );
-      return;
-    }
 
+    // validate() 已确保 _selectedMedicine != null（DropdownButtonFormField 的 validator 负责验证）
     final provider = context.read<ScheduleProvider>();
 
     if (_isEditing) {
@@ -221,7 +228,23 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                   ButtonSegment(value: ScheduleFrequency.prn, label: Text('按需')),
                 ],
                 selected: {_frequency},
-                onSelectionChanged: (v) => setState(() => _frequency = v.first),
+                onSelectionChanged: (v) => setState(() {
+                  final oldFreq = _frequency;
+                  _frequency = v.first;
+                  // 切换频率时清空旧频率的特有数据
+                  if (oldFreq != _frequency) {
+                    if (_frequency != ScheduleFrequency.weekly) {
+                      _selectedWeekDays = [1];
+                    }
+                    if (_frequency != ScheduleFrequency.monthly) {
+                      _selectedMonthDays = [1];
+                    }
+                    if (_frequency != ScheduleFrequency.prn) {
+                      _prnMaxController.clear();
+                      _prnIntervalController.clear();
+                    }
+                  }
+                }),
               ),
             ),
             const SizedBox(height: 16),

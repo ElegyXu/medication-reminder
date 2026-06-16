@@ -152,9 +152,21 @@ class DatabaseHelper {
 
   Future<void> deleteMedicine(String id) async {
     final db = await database;
-    await db.delete('medicines', where: 'id = ?', whereArgs: [id]);
+    // 查询关联的用药计划 ID
+    final scheduleMaps = await db.query(
+      'schedules',
+      columns: ['id'],
+      where: 'medicine_id = ?',
+      whereArgs: [id],
+    );
+    // 删除所有关联计划的提醒
+    for (final s in scheduleMaps) {
+      await db.delete('reminders', where: 'schedule_id = ?', whereArgs: [s['id']]);
+    }
     // 同步删除关联的用药计划
     await db.delete('schedules', where: 'medicine_id = ?', whereArgs: [id]);
+    // 删除药品本身
+    await db.delete('medicines', where: 'id = ?', whereArgs: [id]);
   }
 
   // ==================== Schedules ====================
@@ -184,6 +196,9 @@ class DatabaseHelper {
 
   Future<void> deleteSchedule(String id) async {
     final db = await database;
+    // 先删除关联的提醒
+    await db.delete('reminders', where: 'schedule_id = ?', whereArgs: [id]);
+    // 再删除计划本身
     await db.delete('schedules', where: 'id = ?', whereArgs: [id]);
   }
 
@@ -317,27 +332,40 @@ class DatabaseHelper {
 
   Future<int> getConsecutiveDays() async {
     final db = await database;
-    // 简化版：统计有服药记录的连续天数
+    final now = DateTime.now();
+    final todayStr = DateTime(now.year, now.month, now.day).toIso8601String().substring(0, 10);
+
+    // 1. 检查今天是否有 taken 记录
+    final todayCount = Sqflite.firstIntValue(await db.rawQuery(
+      "SELECT COUNT(*) FROM reminders WHERE date(scheduled_time) = ? AND status = 'taken'",
+      [todayStr],
+    )) ?? 0;
+
+    if (todayCount == 0) return 0;
+
+    // 2. 从今天往前数连续有 taken 的天数
     final result = await db.rawQuery('''
       SELECT DISTINCT date(scheduled_time) as d
       FROM reminders
       WHERE status = 'taken'
       ORDER BY d DESC
-      LIMIT 30
+      LIMIT 366
     ''');
 
-    if (result.isEmpty) return 0;
+    int consecutive = 0;
+    DateTime expectedDate = DateTime(now.year, now.month, now.day);
 
-    int consecutive = 1;
-    for (int i = 1; i < result.length; i++) {
-      final prev = DateTime.parse(result[i - 1]['d'] as String);
-      final curr = DateTime.parse(result[i]['d'] as String);
-      if (prev.difference(curr).inDays == 1) {
+    for (final row in result) {
+      final dateStr = row['d'] as String;
+      final rowDate = DateTime.parse(dateStr);
+      if (rowDate == expectedDate) {
         consecutive++;
-      } else {
+        expectedDate = expectedDate.subtract(const Duration(days: 1));
+      } else if (rowDate.isBefore(expectedDate)) {
         break;
       }
     }
+
     return consecutive;
   }
 }

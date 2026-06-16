@@ -16,6 +16,9 @@ class NotificationService {
 
   static int _notificationIdCounter = 0;
 
+  /// 外部注入的通知响应回调（通知点击 / Action 按钮）
+  void Function(NotificationResponse response)? onNotificationAction;
+
   Future<void> init() async {
     tz_data.initializeTimeZones();
 
@@ -59,7 +62,7 @@ class NotificationService {
   }
 
   void _onNotificationResponse(NotificationResponse response) {
-    // 通知点击处理由 Provider 层通过回调实现
+    onNotificationAction?.call(response);
   }
 
   /// 安排用药提醒通知
