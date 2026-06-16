@@ -1,0 +1,544 @@
+﻿import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:medication_reminder/database/database_helper.dart';
+import 'package:medication_reminder/models/medicine.dart';
+import 'package:medication_reminder/models/schedule.dart';
+import 'package:medication_reminder/models/reminder.dart';
+import 'package:medication_reminder/models/symptom.dart';
+import 'package:medication_reminder/models/guardian_binding.dart';
+
+void main() {
+  late DatabaseHelper db;
+
+  setUpAll(() {
+    sqfliteFfiInit();
+    databaseFactory = databaseFactoryFfi;
+    db = DatabaseHelper();
+  });
+
+  tearDown(() async {
+    final database = await db.database;
+    await database.delete('reminders');
+    await database.delete('schedules');
+    await database.delete('medicines');
+    await database.delete('symptoms');
+    await database.delete('guardian_bindings');
+  });
+
+  final now = DateTime.now();
+  final todayStart = DateTime(now.year, now.month, now.day);
+
+  Medicine makeMed({String id = 'm1', String name = '闂冭儻甯跨憲鎸庣亜', bool isActive = true}) {
+    return Medicine(
+      id: id, name: name, dosageForm: '閻楀洤澧?, specification: '500mg',
+      notes: '妤楊厼鎮楅張宥囨暏', colorValue: 0xFFC41E3A, isActive: isActive,
+      createdAt: now, updatedAt: now,
+    );
+  }
+
+  MedicationSchedule makeSched({String id = 's1', String medId = 'm1', String medName = '闂冭儻甯跨憲鎸庣亜',
+      ScheduleFrequency freq = ScheduleFrequency.daily, List<String> times = const ['08:00', '20:00'],
+      bool isActive = true, DateTime? start, List<int>? weekDays, List<int>? monthDays,
+      DateTime? endDate, int? prnMaxDaily, int? prnMinIntervalMinutes}) {
+    return MedicationSchedule(
+      id: id, medicineId: medId, medicineName: medName, dosage: '1閿?,
+      frequency: freq, timePoints: times, startDate: start ?? todayStart,
+      weekDays: weekDays, monthDays: monthDays, endDate: endDate,
+      prnMaxDaily: prnMaxDaily, prnMinIntervalMinutes: prnMinIntervalMinutes,
+      isActive: isActive, createdAt: now, updatedAt: now,
+    );
+  }
+
+  Reminder makeRem({String id = 'r1', String schedId = 's1', String medName = '闂冭儻甯跨憲鎸庣亜',
+      ReminderStatus status = ReminderStatus.pending, DateTime? schedTime}) {
+    return Reminder(
+      id: id, scheduleId: schedId, medicineName: medName, dosage: '1閿?,
+      scheduledTime: schedTime ?? now, status: status, createdAt: now,
+    );
+  }
+
+  // ==================== Medicines ====================
+  group('閼筋垰鎼?CRUD', () {
+    test('閹绘帒鍙嗛獮鑸电叀鐠囥垼宓傞敓?, () async {
+      await db.insertMedicine(makeMed());
+      final list = await db.getMedicines();
+      expect(list.length, 1);
+      expect(list[0].name, '闂冭儻甯跨憲鎸庣亜');
+    });
+
+    test('閿?ID 閺屻儴顕楅懡顖氭惂', () async {
+      await db.insertMedicine(makeMed());
+      final m = await db.getMedicine('m1');
+      expect(m, isNotNull);
+      expect(m!.specification, '500mg');
+    });
+
+    test('閺屻儴顕楁稉宥呯摠閸︺劎娈?ID 鏉╂柨娲?null', () async {
+      final m = await db.getMedicine('nonexistent');
+      expect(m, isNull);
+    });
+
+    test('閹稿绺哄ú鑽ゅЦ閹浇绻冮敓?, () async {
+      await db.insertMedicine(makeMed(id: 'm1', name: 'A', isActive: true));
+      await db.insertMedicine(makeMed(id: 'm2', name: 'B', isActive: false));
+      final active = await db.getMedicines(isActive: true);
+      final inactive = await db.getMedicines(isActive: false);
+      expect(active.length, 1);
+      expect(active[0].name, 'A');
+      expect(inactive.length, 1);
+      expect(inactive[0].name, 'B');
+    });
+
+    test('閺屻儴顕楅崗銊╁劥閼筋垰鎼ч敍鍫滅瑝鏉╁洦鎶ら敓?, () async {
+      await db.insertMedicine(makeMed(id: 'm1'));
+      await db.insertMedicine(makeMed(id: 'm2', name: '婢舵潙顒?));
+      final all = await db.getMedicines();
+      expect(all.length, 2);
+    });
+
+    test('閺囧瓨鏌婇懡顖氭惂', () async {
+      await db.insertMedicine(makeMed());
+      final updated = makeMed().copyWith(name: '闂冭儻甯跨憲鎸庣亜閼宠泛娉?, notes: '缁岄缚鍚傞張宥囨暏', updatedAt: now);
+      await db.updateMedicine(updated);
+      final m = await db.getMedicine('m1');
+      expect(m!.name, '闂冭儻甯跨憲鎸庣亜閼宠泛娉?);
+      expect(m.notes, '缁岄缚鍚傞張宥囨暏');
+    });
+
+    test('閸掔娀娅庨懡顖氭惂閸氬本顒為崚鐘绘珟閸忓疇浠堥悽銊ㄥ祩鐠佲€冲灊', () async {
+      await db.insertMedicine(makeMed(id: 'm1'));
+      await db.insertSchedule(makeSched(id: 's1', medId: 'm1'));
+      await db.deleteMedicine('m1');
+      final medicines = await db.getMedicines();
+      final schedules = await db.getSchedules();
+      expect(medicines.length, 0);
+      expect(schedules.length, 0);
+    });
+
+    test('缁岄缚宓傞崫浣稿灙閿?, () async {
+      final list = await db.getMedicines();
+      expect(list, isEmpty);
+    });
+
+    test('閹绘帒鍙嗛柌宥咁槻 ID 閼筋垰鎼ч敍鍧甧place閿?, () async {
+      await db.insertMedicine(makeMed(id: 'm1', name: 'A'));
+      await db.insertMedicine(makeMed(id: 'm1', name: 'B'));
+      final list = await db.getMedicines();
+      expect(list.length, 1);
+      expect(list[0].name, 'B');
+    });
+
+    test('婢舵俺宓傞崫浣瑰瘻 updated_at 闂勫秴绨幒鎺戝灙', () async {
+      await db.insertMedicine(Medicine(
+        id: 'm1', name: 'A', dosageForm: '閻楀洤澧?, specification: '1mg',
+        updatedAt: now.subtract(Duration(days: 2)), createdAt: now,
+      ));
+      await db.insertMedicine(Medicine(
+        id: 'm2', name: 'B', dosageForm: '閼宠泛娉?, specification: '2mg',
+        updatedAt: now, createdAt: now,
+      ));
+      final list = await db.getMedicines();
+      expect(list[0].name, 'B');
+      expect(list[1].name, 'A');
+    });
+  });
+
+  // ==================== Schedules ====================
+  group('閻劏宓傜拋鈥冲灊 CRUD', () {
+    test('閹绘帒鍙嗛獮鑸电叀鐠囥垻鏁ら懡顖濐吀閿?, () async {
+      await db.insertSchedule(makeSched());
+      final list = await db.getSchedules();
+      expect(list.length, 1);
+      expect(list[0].medicineName, '闂冭儻甯跨憲鎸庣亜');
+      expect(list[0].frequency, ScheduleFrequency.daily);
+    });
+
+    test('閹稿绺哄ú鑽ゅЦ閹浇绻冨銈堫吀閿?, () async {
+      await db.insertSchedule(makeSched(id: 's1', isActive: true));
+      await db.insertSchedule(makeSched(id: 's2', isActive: false));
+      final active = await db.getSchedules(isActive: true);
+      final inactive = await db.getSchedules(isActive: false);
+      expect(active.length, 1);
+      expect(inactive.length, 1);
+    });
+
+    test('閺囧瓨鏌婇悽銊ㄥ祩鐠佲€冲灊', () async {
+      await db.insertSchedule(makeSched());
+      final updated = MedicationSchedule(
+        id: 's1', medicineId: 'm1', medicineName: '闂冭儻甯跨憲鎸庣亜', dosage: '2閿?,
+        frequency: ScheduleFrequency.daily, timePoints: ['09:00', '21:00'],
+        startDate: todayStart, isActive: true, createdAt: now, updatedAt: now,
+      );
+      await db.updateSchedule(updated);
+      final list = await db.getSchedules();
+      expect(list[0].dosage, '2閿?);
+      expect(list[0].timePoints, ['09:00', '21:00']);
+    });
+
+    test('閸掔娀娅庨悽銊ㄥ祩鐠佲€冲灊', () async {
+      await db.insertSchedule(makeSched());
+      await db.deleteSchedule('s1');
+      final list = await db.getSchedules();
+      expect(list, isEmpty);
+    });
+
+    test('濮ｅ繐鎳嗘０鎴犲芳鐠佲€冲灊閿?weekDays', () async {
+      await db.insertSchedule(makeSched(
+        id: 's1', freq: ScheduleFrequency.weekly,
+        weekDays: [1, 3, 5],
+      ));
+      final list = await db.getSchedules();
+      expect(list[0].frequency, ScheduleFrequency.weekly);
+      expect(list[0].weekDays, [1, 3, 5]);
+    });
+
+    test('濮ｅ繑婀€妫版垹宸肩拋鈥冲灊閿?monthDays', () async {
+      await db.insertSchedule(makeSched(
+        id: 's1', freq: ScheduleFrequency.monthly,
+        monthDays: [1, 15],
+      ));
+      final list = await db.getSchedules();
+      expect(list[0].frequency, ScheduleFrequency.monthly);
+      expect(list[0].monthDays, [1, 15]);
+    });
+
+    test('PRN 閹稿娓剁拋鈥冲灊閸氼偂绗傞梽鎰嫲闂傛挳娈?, () async {
+      await db.insertSchedule(MedicationSchedule(
+        id: 's1', medicineId: 'm1', medicineName: '濮濄垻妫濋敓?, dosage: '1閿?,
+        frequency: ScheduleFrequency.prn, timePoints: [],
+        startDate: todayStart, prnMaxDaily: 3, prnMinIntervalMinutes: 240,
+        isActive: true, createdAt: now, updatedAt: now,
+      ));
+      final list = await db.getSchedules();
+      expect(list[0].frequency, ScheduleFrequency.prn);
+      expect(list[0].prnMaxDaily, 3);
+      expect(list[0].prnMinIntervalMinutes, 240);
+    });
+
+    test('閸氼偆绮ㄩ弶鐔告）閺堢喓娈戠拋鈥冲灊', () async {
+      await db.insertSchedule(makeSched(
+        id: 's1', endDate: now.add(Duration(days: 30)),
+      ));
+      final list = await db.getSchedules();
+      expect(list[0].endDate, isNotNull);
+    });
+
+    test('缁岄缚顓搁崚鎺戝灙閿?, () async {
+      final list = await db.getSchedules();
+      expect(list, isEmpty);
+    });
+  });
+
+  // ==================== Reminders ====================
+  group('閺堝秷宓傞幓鎰板晪 CRUD', () {
+    test('閹绘帒鍙嗛崡鏇熸蒋閹绘劙鍟?, () async {
+      await db.insertReminder(makeRem());
+      final list = await db.getReminders();
+      expect(list.length, 1);
+      expect(list[0].status, ReminderStatus.pending);
+    });
+
+    test('閹靛綊鍣洪幓鎺戝弳閹绘劙鍟?, () async {
+      await db.insertReminders([
+        makeRem(id: 'r1', schedTime: DateTime(2026, 6, 16, 8, 0)),
+        makeRem(id: 'r2', schedTime: DateTime(2026, 6, 16, 12, 0)),
+        makeRem(id: 'r3', schedTime: DateTime(2026, 6, 16, 20, 0)),
+      ]);
+      final list = await db.getReminders();
+      expect(list.length, 3);
+    });
+
+    test('閹稿濮搁幀浣界箖濠娿倖褰侀敓?, () async {
+      await db.insertReminder(makeRem(id: 'r1', status: ReminderStatus.pending));
+      await db.insertReminder(makeRem(id: 'r2', status: ReminderStatus.taken));
+      final taken = await db.getReminders(status: 'taken');
+      expect(taken.length, 1);
+      expect(taken[0].status, ReminderStatus.taken);
+    });
+
+    test('閹稿妞傞梻纾嬪瘱閸ョ绻冨銈嗗絹閿?, () async {
+      await db.insertReminder(makeRem(id: 'r1', schedTime: DateTime(2026, 6, 16, 8, 0)));
+      await db.insertReminder(makeRem(id: 'r2', schedTime: DateTime(2026, 6, 17, 8, 0)));
+      final today = await db.getReminders(
+        fromDate: DateTime(2026, 6, 16),
+        toDate: DateTime(2026, 6, 16, 23, 59, 59),
+      );
+      expect(today.length, 1);
+      expect(today[0].id, 'r1');
+    });
+
+    test('limit 閸欏倹鏆熼梽鎰煑鏉╂柨娲栭弫浼村櫤', () async {
+      await db.insertReminders([
+        makeRem(id: 'r1', schedTime: DateTime(2026, 6, 16, 8, 0)),
+        makeRem(id: 'r2', schedTime: DateTime(2026, 6, 16, 9, 0)),
+        makeRem(id: 'r3', schedTime: DateTime(2026, 6, 16, 10, 0)),
+      ]);
+      final list = await db.getReminders(limit: 2);
+      expect(list.length, 2);
+    });
+
+    test('閺囧瓨鏌婇幓鎰板晪閻樿埖鈧椒璐熷鍙夋箛', () async {
+      await db.insertReminder(makeRem());
+      final updated = makeRem().copyWith(status: ReminderStatus.taken, source: 'manual', takenAt: now);
+      await db.updateReminder(updated);
+      final list = await db.getReminders();
+      expect(list[0].status, ReminderStatus.taken);
+      expect(list[0].source, 'manual');
+      expect(list[0].takenAt, isNotNull);
+    });
+
+    test('閺囧瓨鏌婇幓鎰板晪閻樿埖鈧椒璐熺捄瀹犵箖', () async {
+      await db.insertReminder(makeRem());
+      final updated = makeRem().copyWith(status: ReminderStatus.skipped);
+      await db.updateReminder(updated);
+      final list = await db.getReminders();
+      expect(list[0].status, ReminderStatus.skipped);
+    });
+
+    test('閹绘劙鍟嬮幐澶嬫鎼村繑甯撻敓?, () async {
+      await db.insertReminders([
+        makeRem(id: 'r1', schedTime: DateTime(2026, 6, 16, 20, 0)),
+        makeRem(id: 'r2', schedTime: DateTime(2026, 6, 16, 8, 0)),
+        makeRem(id: 'r3', schedTime: DateTime(2026, 6, 16, 12, 0)),
+      ]);
+      final list = await db.getReminders();
+      expect(list[0].id, 'r2'); // 08:00 first
+      expect(list[1].id, 'r3'); // 12:00
+      expect(list[2].id, 'r1'); // 20:00
+    });
+
+    test('缁岀儤褰侀柋鎺戝灙閿?, () async {
+      final list = await db.getReminders();
+      expect(list, isEmpty);
+    });
+  });
+
+  // ==================== Symptoms ====================
+  group('閻ュ洨濮?CRUD', () {
+    test('閹绘帒鍙嗛獮鑸电叀鐠囥垻妫侀敓?, () async {
+      await db.insertSymptom(Symptom(
+        id: 'sy1', name: '婢跺妫?, severity: 3, notes: '鏉炶浜?,
+        relatedMedicineId: 'm1', relatedMedicineName: '闂冭儻甯跨憲鎸庣亜', createdAt: now,
+      ));
+      final list = await db.getSymptoms();
+      expect(list.length, 1);
+      expect(list[0].name, '婢跺妫?);
+      expect(list[0].severity, 3);
+    });
+
+    test('閻ュ洨濮?limit 闂勬劕鍩?, () async {
+      for (var i = 0; i < 5; i++) {
+        await db.insertSymptom(Symptom(
+          id: 'sy$i', name: '閻ュ洨濮?i', severity: i + 1,
+          createdAt: now.subtract(Duration(hours: i)),
+        ));
+      }
+      final list = await db.getSymptoms(limit: 3);
+      expect(list.length, 3);
+    });
+
+    test('閻ュ洨濮搁幐澶嬫闂傛挳妾锋惔蹇斿笓閿?, () async {
+      await db.insertSymptom(Symptom(
+        id: 'sy1', name: '閺冄呮閿?, severity: 1,
+        createdAt: now.subtract(Duration(days: 2)),
+      ));
+      await db.insertSymptom(Symptom(
+        id: 'sy2', name: '閺傛壆妫侀敓?, severity: 2, createdAt: now,
+      ));
+      final list = await db.getSymptoms();
+      expect(list[0].name, '閺傛壆妫侀敓?);
+    });
+
+    test('閸掔娀娅庨惀鍥╁Ц', () async {
+      await db.insertSymptom(Symptom(
+        id: 'sy1', name: '婢跺妫?, severity: 1, createdAt: now,
+      ));
+      await db.deleteSymptom('sy1');
+      final list = await db.getSymptoms();
+      expect(list, isEmpty);
+    });
+  });
+
+  // ==================== Guardian Bindings ====================
+  group('鐎硅泛鐫樼紒鎴濈暰 CRUD', () {
+    test('閹绘帒鍙嗛獮鑸电叀鐠囥垻绮﹂敓?, () async {
+      await db.insertBinding(GuardianBinding(
+        id: 'b1', patientPhone: '13800001111', patientNickname: '瀵姴銇囬敓?,
+        guardianPhone: '13900002222', status: BindingStatus.active,
+        createdAt: now, updatedAt: now,
+      ));
+      final list = await db.getBindings();
+      expect(list.length, 1);
+      expect(list[0].patientNickname, '瀵姴銇囬敓?);
+      expect(list[0].status, BindingStatus.active);
+    });
+
+    test('閹稿濮搁幀浣界箖濠娿倗绮﹂敓?, () async {
+      await db.insertBinding(GuardianBinding(
+        id: 'b1', patientPhone: '13800001111', patientNickname: 'A',
+        guardianPhone: '13900002222', status: BindingStatus.active,
+        createdAt: now, updatedAt: now,
+      ));
+      await db.insertBinding(GuardianBinding(
+        id: 'b2', patientPhone: '13800003333', patientNickname: 'B',
+        guardianPhone: '13900004444', status: BindingStatus.pending,
+        createdAt: now, updatedAt: now,
+      ));
+      final active = await db.getBindings(status: 'active');
+      expect(active.length, 1);
+      expect(active[0].patientNickname, 'A');
+    });
+
+    test('閺囧瓨鏌婄紒鎴濈暰閻樿鎷?, () async {
+      await db.insertBinding(GuardianBinding(
+        id: 'b1', patientPhone: '13800001111', patientNickname: '瀵姴銇囬敓?,
+        guardianPhone: '13900002222', status: BindingStatus.pending,
+        createdAt: now, updatedAt: now,
+      ));
+      await db.updateBinding(GuardianBinding(
+        id: 'b1', patientPhone: '13800001111', patientNickname: '瀵姴銇囬敓?,
+        guardianPhone: '13900002222', status: BindingStatus.revoked,
+        createdAt: now, updatedAt: now,
+      ));
+      final list = await db.getBindings();
+      expect(list[0].status, BindingStatus.revoked);
+    });
+
+    test('閸掔娀娅庣紒鎴濈暰', () async {
+      await db.insertBinding(GuardianBinding(
+        id: 'b1', patientPhone: '13800001111', patientNickname: '瀵姴銇囬敓?,
+        guardianPhone: '13900002222', createdAt: now, updatedAt: now,
+      ));
+      await db.deleteBinding('b1');
+      final list = await db.getBindings();
+      expect(list, isEmpty);
+    });
+  });
+
+  // ==================== Statistics ====================
+  group('缂佺喕顓搁弫鐗堝祦', () {
+    test('getTodayStats 閺冪姵鏆熼幑顔芥鏉╂柨娲?0', () async {
+      final stats = await db.getTodayStats();
+      expect(stats['total'], 0);
+      expect(stats['taken'], 0);
+    });
+
+    test('getTodayStats 濮濓絿鈥樼紒鐔活吀娴犲﹥妫╅弫鐗堝祦', () async {
+      await db.insertReminder(makeRem(id: 'r1', status: ReminderStatus.taken, schedTime: now));
+      await db.insertReminder(makeRem(id: 'r2', status: ReminderStatus.pending, schedTime: now));
+      await db.insertReminder(makeRem(id: 'r3', status: ReminderStatus.skipped,
+          schedTime: now.subtract(Duration(days: 1)))); // 閺勩劌銇夐惃鍕瑝閿?      final stats = await db.getTodayStats();
+      expect(stats['total'], 2);
+      expect(stats['taken'], 1);
+    });
+
+    test('getConsecutiveDays 閺冪姾顔囪ぐ鏇＄箲閿?0', () async {
+      final days = await db.getConsecutiveDays();
+      expect(days, 0);
+    });
+
+    test('getConsecutiveDays 閸楁洖銇夌拋鏉跨秿鏉╂柨娲?1', () async {
+      await db.insertReminder(makeRem(id: 'r1', status: ReminderStatus.taken, schedTime: now));
+      final days = await db.getConsecutiveDays();
+      expect(days, 1);
+    });
+
+    test('getConsecutiveDays 鏉╃偟鐢绘径姘亯', () async {
+      for (var i = 0; i < 3; i++) {
+        await db.insertReminder(Reminder(
+          id: 'r$i', scheduleId: 's1', medicineName: '閿?, dosage: '1閿?,
+          scheduledTime: now.subtract(Duration(days: i)),
+          status: ReminderStatus.taken, createdAt: now,
+        ));
+      }
+      final days = await db.getConsecutiveDays();
+      expect(days, 3);
+    });
+
+    test('getConsecutiveDays 閺堝妫块敓?, () async {
+      await db.insertReminder(Reminder(
+        id: 'r1', scheduleId: 's1', medicineName: '閿?, dosage: '1閿?,
+        scheduledTime: now, status: ReminderStatus.taken, createdAt: now,
+      ));
+      await db.insertReminder(Reminder(
+        id: 'r2', scheduleId: 's1', medicineName: '閿?, dosage: '1閿?,
+        scheduledTime: now.subtract(Duration(days: 2)), status: ReminderStatus.taken, createdAt: now,
+      ));
+      final days = await db.getConsecutiveDays();
+      expect(days, 1); // 閺勩劌銇夐弬顓濈啊
+    });
+  });
+
+  // ==================== Edge Cases ====================
+  group('鏉堝湱鏅悽銊ょ伐', () {
+    test('閼筋垰鎼ч崥宥呮儓閻楄鐣╃€涙顑?, () async {
+      await db.insertMedicine(makeMed(name: "闂冨灝寰冮崠瑙勭亜 (Aspirin) 100mg/閿?));
+      final list = await db.getMedicines();
+      expect(list[0].name, "闂冨灝寰冮崠瑙勭亜 (Aspirin) 100mg/閿?);
+    });
+
+    test('閼筋垰鎼ф径鍥ㄦ暈娑撹櫣鈹?, () async {
+      await db.insertMedicine(Medicine(
+        id: 'm1', name: '缂佸鏁撶槐鐕?, dosageForm: '閻楀洤澧?, specification: '100mg',
+        createdAt: now, updatedAt: now,
+      ));
+      final m = await db.getMedicine('m1');
+      expect(m!.notes, isNull);
+    });
+
+    test('閻劏宓傜拋鈥冲灊閸氼偄顦挎稉顏呮闂傚鍋?, () async {
+      await db.insertSchedule(MedicationSchedule(
+        id: 's1', medicineId: 'm1', medicineName: '閻╂劙鍚€娴滃瞼鏁抽崣宀冨剺', dosage: '1閿?,
+        frequency: ScheduleFrequency.daily,
+        timePoints: ['07:00', '12:00', '18:00', '22:00'],
+        startDate: todayStart, isActive: true, createdAt: now, updatedAt: now,
+      ));
+      final list = await db.getSchedules();
+      expect(list[0].timePoints.length, 4);
+    });
+
+    test('閻ュ洨濮告稉銉╁櫢鎼达缚璐熸潏鍦櫕閿?1', () async {
+      await db.insertSymptom(Symptom(
+        id: 'sy1', name: '鏉炶浜曟稉宥忔嫹?, severity: 1, createdAt: now,
+      ));
+      final list = await db.getSymptoms();
+      expect(list[0].severity, 1);
+    });
+
+    test('閻ュ洨濮告稉銉╁櫢鎼达缚璐熸潏鍦櫕閿?5', () async {
+      await db.insertSymptom(Symptom(
+        id: 'sy1', name: '閸撗呭創閻よ偐妫?, severity: 5, createdAt: now,
+      ));
+      final list = await db.getSymptoms();
+      expect(list[0].severity, 5);
+    });
+
+    test('閹碘偓閺堝绮︾€规氨濮搁幀浣圭亣閿?, () async {
+      for (final status in BindingStatus.values) {
+        await db.insertBinding(GuardianBinding(
+          id: 'b_${status.name}', patientPhone: '13800001111',
+          patientNickname: '閻劍鍩?, guardianPhone: '13900002222',
+          status: status, createdAt: now, updatedAt: now,
+        ));
+      }
+      final list = await db.getBindings();
+      expect(list.length, 4);
+    });
+
+    test('閸掔娀娅庢稉宥呯摠閸︺劎娈戠拋鏉跨秿娑撳秵濮忓鍌氱埗', () async {
+      // 娑撳秴绨查幎娑樺毉瀵倸鐖?      await db.deleteMedicine('nonexistent');
+      await db.deleteSchedule('nonexistent');
+      await db.deleteSymptom('nonexistent');
+      await db.deleteBinding('nonexistent');
+    });
+
+    test('閹靛綊鍣洪幓鎺戝弳缁屽搫鍨敓?, () async {
+      await db.insertReminders([]);
+      final list = await db.getReminders();
+      expect(list, isEmpty);
+    });
+  });
+}
+
+
+
