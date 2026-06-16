@@ -27,7 +27,6 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
   DateTime _startDate = DateTime.now();
   DateTime? _endDate;
   bool _isEditing = false;
-  String? _medicineError;
 
   @override
   void initState() {
@@ -72,12 +71,6 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
 
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
-
-    if (_selectedMedicine == null) {
-      setState(() => _medicineError = '必须选择药品');
-      return;
-    }
-    _medicineError = null;
 
     // 检测重复时间点
     if (_frequency != ScheduleFrequency.prn) {
@@ -230,12 +223,12 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
           children: [
             // 药品选择
             Consumer<MedicineProvider>(
-              builder: (context, mp, _) => DropdownMenu<Medicine>(
-                initialSelection: _selectedMedicine,
-                enableFilter: false,
-                enableSearch: false,
-                expandedInsets: EdgeInsets.zero,
-                inputDecorationTheme: InputDecorationTheme(
+              builder: (context, mp, _) => DropdownButtonFormField<Medicine>(
+                initialValue: _selectedMedicine,
+                isExpanded: true,
+                alignment: AlignmentDirectional.centerStart,
+                decoration: InputDecoration(
+                  labelText: '关联药品',
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
                   border: OutlineInputBorder(
@@ -253,17 +246,43 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                       width: 2,
                     ),
                   ),
-                  prefixIconColor: Theme.of(context).colorScheme.primary,
                 ),
-                leadingIcon: Icon(Icons.medication_outlined,
+                selectedItemBuilder: (context) => mp.activeMedicines.map((m) =>
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 4),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 32,
+                          height: 32,
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(Icons.medication,
+                            color: Theme.of(context).colorScheme.primary, size: 18),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(m.name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                        ),
+                      ],
+                    ),
+                  )
+                ).toList(),
+                hint: const Text('请选择药品'),
+                validator: (v) => v == null ? '必须选择药品' : null,
+                icon: Icon(Icons.keyboard_arrow_down_rounded,
                   color: Theme.of(context).colorScheme.primary),
-                label: const Text('关联药品'),
-                hintText: '请选择药品',
-                dropdownMenuEntries: mp.activeMedicines.map((m) =>
-                  DropdownMenuEntry<Medicine>(
+                dropdownColor: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(14),
+                items: mp.activeMedicines.map((m) =>
+                  DropdownMenuItem(
                     value: m,
-                    label: m.name,
-                    labelWidget: Padding(
+                    child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
                         children: [
@@ -304,19 +323,10 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                     ),
                   )
                 ).toList(),
-                onSelected: (v) => setState(() { _selectedMedicine = v; _medicineError = null; }),
-              ),
+                onChanged: (v) => setState(() => _selectedMedicine = v),
             ),
-            // 药品必选手动校验提示
-            if (_medicineError != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 4, left: 16),
-                child: Text(_medicineError!,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.error,
-                    fontSize: 12)),
-              ),
-            const SizedBox(height: 16),
+          ),
+          const SizedBox(height: 16),
 
             // 剂量
             TextFormField(
@@ -331,6 +341,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
             const SizedBox(height: 8),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.only(right: 8),
               child: SegmentedButton<ScheduleFrequency>(
                 segments: const [
                   ButtonSegment(value: ScheduleFrequency.daily, label: Text('每日')),
