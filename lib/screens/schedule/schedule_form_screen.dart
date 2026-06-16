@@ -77,10 +77,17 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
       final seen = <String>{};
       for (final t in _timePoints) {
         if (!seen.add(t)) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+          showDialog(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('重复时间'),
               content: Text('用药时间「$t」重复，请修改后重试'),
-              behavior: SnackBarBehavior.floating,
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx),
+                  child: const Text('知道了'),
+                ),
+              ],
             ),
           );
           return;
@@ -240,6 +247,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                   color: Theme.of(context).colorScheme.primary),
                 dropdownColor: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(14),
+                isExpanded: true,
                 items: mp.activeMedicines.map((m) =>
                   DropdownMenuItem(
                     value: m,
@@ -251,21 +259,28 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Color(m.colorValue).withValues(alpha: 0.12),
+                              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Icon(Icons.medication,
-                              color: Color(m.colorValue), size: 20),
+                              color: Theme.of(context).colorScheme.primary, size: 20),
                           ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                Text(m.name,
+                                Text(
+                                  m.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
                                     fontSize: 15, fontWeight: FontWeight.w600)),
-                                Text('${m.dosageForm} · ${m.specification}',
+                                Text(
+                                  '${m.dosageForm} · ${m.specification}',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                   style: TextStyle(
                                     fontSize: 12,
                                     color: Theme.of(context).colorScheme.onSurfaceVariant)),
@@ -487,7 +502,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                           children: [
                             const Text('开始日期', style: TextStyle(fontSize: 12, color: Colors.grey)),
                             Text(
-                              '${_startDate.year}-${_startDate.month.toString().padLeft(2, '0')}-${_startDate.day.toString().padLeft(2, '0')}',
+                              '${_startDate.year}年${_startDate.month}月${_startDate.day}日',
                               style: const TextStyle(fontSize: 14),
                             ),
                           ],
@@ -510,7 +525,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                             const Text('结束日期', style: TextStyle(fontSize: 12, color: Colors.grey)),
                             Text(
                               _endDate != null
-                                  ? '${_endDate!.year}-${_endDate!.month.toString().padLeft(2, '0')}-${_endDate!.day.toString().padLeft(2, '0')}'
+                                  ? '${_endDate!.year}年${_endDate!.month}月${_endDate!.day}日'
                                   : '不限',
                               style: const TextStyle(fontSize: 14),
                             ),
