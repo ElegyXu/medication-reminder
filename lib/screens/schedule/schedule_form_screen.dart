@@ -72,6 +72,22 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
+    // 检测重复时间点
+    if (_frequency != ScheduleFrequency.prn) {
+      final seen = <String>{};
+      for (final t in _timePoints) {
+        if (!seen.add(t)) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('用药时间「$t」重复，请修改后重试'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+          return;
+        }
+      }
+    }
+
     // validate() 已确保 _selectedMedicine != null（DropdownButtonFormField 的 validator 负责验证）
     final provider = context.read<ScheduleProvider>();
 
@@ -196,11 +212,70 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
             Consumer<MedicineProvider>(
               builder: (context, mp, _) => DropdownButtonFormField<Medicine>(
                 initialValue: _selectedMedicine,
-                decoration: const InputDecoration(labelText: '关联药品'),
+                decoration: InputDecoration(
+                  labelText: '关联药品',
+                  filled: true,
+                  fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                      width: 2,
+                    ),
+                  ),
+                  prefixIcon: Icon(Icons.medication_outlined,
+                    color: Theme.of(context).colorScheme.primary),
+                ),
                 hint: const Text('请选择药品'),
                 validator: (v) => v == null ? '必须选择药品' : null,
+                icon: Icon(Icons.keyboard_arrow_down_rounded,
+                  color: Theme.of(context).colorScheme.primary),
+                dropdownColor: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(14),
                 items: mp.activeMedicines.map((m) =>
-                  DropdownMenuItem(value: m, child: Text('${m.name} (${m.specification})'))
+                  DropdownMenuItem(
+                    value: m,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 6),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Color(m.colorValue).withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(Icons.medication,
+                              color: Color(m.colorValue), size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(m.name,
+                                  style: const TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.w600)),
+                                Text('${m.dosageForm} · ${m.specification}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
                 ).toList(),
                 onChanged: (v) => setState(() => _selectedMedicine = v),
               ),
