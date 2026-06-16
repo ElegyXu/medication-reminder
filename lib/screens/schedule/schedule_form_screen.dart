@@ -27,6 +27,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
   DateTime _startDate = DateTime.now();
   DateTime? _endDate;
   bool _isEditing = false;
+  String? _medicineError;
 
   @override
   void initState() {
@@ -72,6 +73,12 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
 
+    if (_selectedMedicine == null) {
+      setState(() => _medicineError = '必须选择药品');
+      return;
+    }
+    _medicineError = null;
+
     // 检测重复时间点
     if (_frequency != ScheduleFrequency.prn) {
       final seen = <String>{};
@@ -80,10 +87,16 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
           showDialog(
             context: context,
             builder: (ctx) => AlertDialog(
-              title: const Text('重复时间'),
-              content: Text('用药时间「$t」重复，请修改后重试'),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(28),
+              ),
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
+              title: Text('重复时间',
+                style: Theme.of(context).textTheme.headlineSmall),
+              content: Text('用药时间「$t」重复，请修改后重试',
+                style: Theme.of(context).textTheme.bodyMedium),
               actions: [
-                TextButton(
+                FilledButton(
                   onPressed: () => Navigator.pop(ctx),
                   child: const Text('知道了'),
                 ),
@@ -217,10 +230,12 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
           children: [
             // 药品选择
             Consumer<MedicineProvider>(
-              builder: (context, mp, _) => DropdownButtonFormField<Medicine>(
-                initialValue: _selectedMedicine,
-                decoration: InputDecoration(
-                  labelText: '关联药品',
+              builder: (context, mp, _) => DropdownMenu<Medicine>(
+                initialSelection: _selectedMedicine,
+                enableFilter: false,
+                enableSearch: false,
+                expandedInsets: EdgeInsets.zero,
+                inputDecorationTheme: InputDecorationTheme(
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.surfaceContainerLow,
                   border: OutlineInputBorder(
@@ -238,20 +253,17 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                       width: 2,
                     ),
                   ),
-                  prefixIcon: Icon(Icons.medication_outlined,
-                    color: Theme.of(context).colorScheme.primary),
+                  prefixIconColor: Theme.of(context).colorScheme.primary,
                 ),
-                hint: const Text('请选择药品'),
-                validator: (v) => v == null ? '必须选择药品' : null,
-                icon: Icon(Icons.keyboard_arrow_down_rounded,
+                leadingIcon: Icon(Icons.medication_outlined,
                   color: Theme.of(context).colorScheme.primary),
-                dropdownColor: Theme.of(context).colorScheme.surface,
-                borderRadius: BorderRadius.circular(14),
-                isExpanded: true,
-                items: mp.activeMedicines.map((m) =>
-                  DropdownMenuItem(
+                label: const Text('关联药品'),
+                hintText: '请选择药品',
+                dropdownMenuEntries: mp.activeMedicines.map((m) =>
+                  DropdownMenuEntry<Medicine>(
                     value: m,
-                    child: Padding(
+                    label: m.name,
+                    labelWidget: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 6),
                       child: Row(
                         children: [
@@ -292,9 +304,18 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                     ),
                   )
                 ).toList(),
-                onChanged: (v) => setState(() => _selectedMedicine = v),
+                onSelected: (v) => setState(() { _selectedMedicine = v; _medicineError = null; }),
               ),
             ),
+            // 药品必选手动校验提示
+            if (_medicineError != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 4, left: 16),
+                child: Text(_medicineError!,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.error,
+                    fontSize: 12)),
+              ),
             const SizedBox(height: 16),
 
             // 剂量
