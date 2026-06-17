@@ -234,9 +234,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
 
     return Container(
       decoration: BoxDecoration(
-        color: cs.surface,
+        color: cs.primaryContainer,
         gradient: LinearGradient(
-          colors: [cs.primaryContainer, cs.surface],
+          colors: [cs.surface, cs.primaryContainer],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),
