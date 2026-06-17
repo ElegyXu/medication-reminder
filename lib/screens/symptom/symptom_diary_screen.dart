@@ -147,6 +147,8 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('症状日记')),
       floatingActionButton: FloatingActionButton(
@@ -166,7 +168,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
                 children: [
                   Icon(Icons.edit_note, size: 64, color: Colors.grey.shade300),
                   const SizedBox(height: 12),
-                  Text('暂无记录', style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
+                  Text('暂无记录', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16)),
                 ],
               ),
             );

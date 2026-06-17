@@ -46,6 +46,8 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
   }
 
   Widget _buildBody(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Consumer2<ScheduleProvider, ReminderProvider>(
       builder: (context, scheduleProvider, reminderProvider, _) {
         if (scheduleProvider.isLoading || reminderProvider.isLoading) {
@@ -59,9 +61,9 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
               children: [
                 Icon(Icons.schedule, size: 64, color: Colors.grey.shade300),
                 const SizedBox(height: 12),
-                Text('暂无用药计划', style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
+                Text('暂无用药计划', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16)),
                 const SizedBox(height: 4),
-                const Text('点击右下角添加', style: TextStyle(color: Colors.grey, fontSize: 13)),
+                Text('点击右下角添加', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
               ],
             ),
           );
@@ -81,16 +83,16 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              _buildSearchBar(),
+              _buildSearchBar(cs),
               const SizedBox(height: 12),
-              _buildSafetyCard(reminderProvider),
+              _buildSafetyCard(reminderProvider, cs),
               const SizedBox(height: 12),
               ...scheduleProvider.schedules.map((s) {
                 final reminders = remindersByMedicine[s.medicineName] ?? [];
-                return _buildScheduleCard(context, s, reminders, scheduleProvider);
+                return _buildScheduleCard(context, s, reminders, scheduleProvider, cs);
               }),
               const SizedBox(height: 12),
-              _buildNextDoseReminder(reminderProvider.todayReminders),
+              _buildNextDoseReminder(reminderProvider.todayReminders, cs),
             ],
           ),
         );
@@ -101,16 +103,17 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
   // ========================
   // 搜索栏
   // ========================
-  Widget _buildSearchBar() {
+  Widget _buildSearchBar(ColorScheme cs) {
     return Row(
       children: [
         Expanded(
           child: TextField(
             decoration: InputDecoration(
               hintText: '搜索药品、疾病或症状...',
-              prefixIcon: const Icon(Icons.search, color: Colors.grey),
+              hintStyle: TextStyle(color: cs.onSurfaceVariant),
+              prefixIcon: Icon(Icons.search, color: cs.onSurfaceVariant),
               filled: true,
-              fillColor: Colors.grey.shade100,
+              fillColor: cs.surfaceContainerHighest,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -137,18 +140,18 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
   // ========================
   // 安全检测卡片
   // ========================
-  Widget _buildSafetyCard(ReminderProvider rp) {
+  Widget _buildSafetyCard(ReminderProvider rp, ColorScheme cs) {
     final adherence = rp.todayAdherence;
     final taken = rp.todayStats['taken'] ?? 0;
     final total = rp.todayStats['total'] ?? 0;
     final skipped = rp.todayReminders.where((r) => r.status == ReminderStatus.skipped).length;
 
     final bool hasIssues = total > 0 && (adherence < 0.8 || skipped > 0);
-    final Color bgColor = hasIssues ? Colors.orange.shade50 : Colors.green.shade50;
-    final Color iconBg = hasIssues ? Colors.orange.shade100 : Colors.green.shade100;
-    final Color iconColor = hasIssues ? Colors.orange.shade700 : Colors.green.shade700;
-    final Color badgeBg = hasIssues ? Colors.orange.shade200 : Colors.green.shade200;
-    final Color badgeColor = hasIssues ? Colors.orange.shade800 : Colors.green.shade800;
+    final Color bgColor = hasIssues ? cs.errorContainer : cs.primaryContainer;
+    final Color iconBg = hasIssues ? cs.errorContainer.withAlpha(140) : cs.primaryContainer.withAlpha(140);
+    final Color iconColor = hasIssues ? cs.onErrorContainer : cs.onPrimaryContainer;
+    final Color badgeBg = hasIssues ? cs.errorContainer.withAlpha(180) : cs.primaryContainer.withAlpha(180);
+    final Color badgeColor = hasIssues ? cs.onErrorContainer : cs.onPrimaryContainer;
 
     String statusText;
     if (total == 0) {
@@ -183,7 +186,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
           Expanded(
             child: Text(
               statusText,
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: hasIssues ? cs.onErrorContainer : cs.onPrimaryContainer),
             ),
           ),
           Container(
@@ -217,6 +220,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
     MedicationSchedule schedule,
     List<Reminder> reminders,
     ScheduleProvider provider,
+    ColorScheme cs,
   ) {
     final medicineProvider = context.read<MedicineProvider>();
     final medicine = medicineProvider.medicines
@@ -250,10 +254,10 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                   width: 44,
                   height: 44,
                   decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
+                    color: cs.primaryContainer.withAlpha(80),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(Icons.medical_services, color: Colors.orange.shade700, size: 24),
+                  child: Icon(Icons.medical_services, color: cs.onPrimaryContainer, size: 24),
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -267,13 +271,13 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                       if (medicine != null)
                         Text(
                           '${medicine.dosageForm} · ${medicine.specification}',
-                          style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+                          style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13),
                         ),
                     ],
                   ),
                 ),
                 PopupMenuButton<String>(
-                  icon: Icon(Icons.more_horiz, color: Colors.grey.shade500),
+                  icon: Icon(Icons.more_horiz, color: cs.onSurfaceVariant),
                   onSelected: (action) {
                     if (action == 'edit') {
                       _editSchedule(context, schedule, provider);
@@ -300,17 +304,17 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: cs.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.access_time, size: 14, color: Colors.grey.shade600),
+                      Icon(Icons.access_time, size: 14, color: cs.onSurfaceVariant),
                       const SizedBox(width: 4),
                       Text(
                         '${schedule.frequencyLabel}${schedule.frequency == ScheduleFrequency.daily ? '${schedule.timePoints.length}次' : ''}',
-                        style: TextStyle(color: Colors.grey.shade700, fontSize: 13, fontWeight: FontWeight.w500),
+                        style: TextStyle(color: cs.onSurface, fontSize: 13, fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -321,17 +325,17 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: Colors.pink.shade50,
+                    color: cs.secondaryContainer,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.show_chart, size: 14, color: Colors.pink.shade400),
+                      Icon(Icons.show_chart, size: 14, color: cs.onSecondaryContainer),
                       const SizedBox(width: 4),
                       Text(
                         '完成率 $completionRate%',
-                        style: TextStyle(color: Colors.pink.shade500, fontSize: 13, fontWeight: FontWeight.w500),
+                        style: TextStyle(color: cs.onSecondaryContainer, fontSize: 13, fontWeight: FontWeight.w500),
                       ),
                     ],
                   ),
@@ -357,12 +361,12 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
               children: periodLabels.map((label) => Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
+                  color: cs.secondaryContainer,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   label,
-                  style: TextStyle(color: Colors.orange.shade800, fontSize: 13, fontWeight: FontWeight.w500),
+                  style: TextStyle(color: cs.onSecondaryContainer, fontSize: 13, fontWeight: FontWeight.w500),
                 ),
               )).toList(),
             ),
@@ -375,7 +379,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
   // ========================
   // 下次服药提醒
   // ========================
-  Widget _buildNextDoseReminder(List<Reminder> reminders) {
+  Widget _buildNextDoseReminder(List<Reminder> reminders, ColorScheme cs) {
     final now = DateTime.now();
     final pending = reminders
         .where((r) => r.status == ReminderStatus.pending && r.scheduledTime.isAfter(now))
@@ -386,12 +390,12 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.grey.shade50,
+          color: cs.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
           children: [
-            Icon(Icons.check_circle_outline, size: 24, color: Colors.green.shade400),
+            Icon(Icons.check_circle_outline, size: 24, color: cs.primary),
             const SizedBox(width: 12),
             const Text('今日已完成全部服药', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
           ],
@@ -414,7 +418,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.orange.shade50,
+        color: cs.secondaryContainer,
         borderRadius: BorderRadius.circular(14),
       ),
       child: Row(
@@ -422,28 +426,28 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: Colors.orange.shade100,
+              color: cs.secondaryContainer.withAlpha(200),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(Icons.notifications_active, color: Colors.orange.shade700, size: 22),
+            child: Icon(Icons.notifications_active, color: cs.onSecondaryContainer, size: 22),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: RichText(
               text: TextSpan(
-                style: const TextStyle(fontSize: 15, color: Colors.black87),
+                style: TextStyle(fontSize: 15, color: cs.onSurface),
                 children: [
                   const TextSpan(text: '下次服药 '),
                   TextSpan(
                     text: '$timeStr后',
-                    style: TextStyle(color: Colors.orange.shade800, fontWeight: FontWeight.w700),
+                    style: TextStyle(color: cs.onSecondaryContainer, fontWeight: FontWeight.w700),
                   ),
                   TextSpan(text: ' · ${next.medicineName} ${next.dosage}'),
                 ],
               ),
             ),
           ),
-          Icon(Icons.chevron_right, color: Colors.orange.shade400),
+          Icon(Icons.chevron_right, color: cs.onSecondaryContainer),
         ],
       ),
     );

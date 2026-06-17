@@ -62,7 +62,7 @@ class _GuardianHomeScreenState extends State<GuardianHomeScreen> {
             const SizedBox(height: 8),
             Text(
               '本地版本：绑定将直接生效，云端版本将等待对方确认',
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+              style: TextStyle(color: Theme.of(ctx).colorScheme.onSurfaceVariant, fontSize: 13),
             ),
           ],
         ),
@@ -127,6 +127,8 @@ class _GuardianHomeScreenState extends State<GuardianHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Scaffold(
       appBar: AppBar(title: const Text('家属监护')),
       floatingActionButton: FloatingActionButton(
@@ -142,10 +144,10 @@ class _GuardianHomeScreenState extends State<GuardianHomeScreen> {
                     children: [
                       Icon(Icons.people_outline, size: 64, color: Colors.grey.shade300),
                       const SizedBox(height: 12),
-                      Text('暂无绑定患者', style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
+                      Text('暂无绑定患者', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16)),
                       const SizedBox(height: 4),
                       Text('添加家属绑定后可查看患者服药情况',
-                          style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+                          style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
                     ],
                   ),
                 )

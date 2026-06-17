@@ -295,7 +295,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                           text: TextSpan(
                             children: [
                               TextSpan(text: '$taken', style: tt.headlineSmall?.copyWith(color: cs.primary)),
-                              TextSpan(text: ' / $total', style: tt.titleLarge?.copyWith(color: cs.outline)),
+                              TextSpan(text: ' / $total', style: tt.titleLarge?.copyWith(color: cs.onSurfaceVariant)),
                             ],
                           ),
                         ),
@@ -446,7 +446,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   const SizedBox(height: 12),
                   Text('今日暂无用药计划', style: tt.bodyLarge?.copyWith(color: cs.onSurfaceVariant)),
                   const SizedBox(height: 4),
-                  Text('去药品管理添加药品和用药计划', style: tt.bodyMedium?.copyWith(color: cs.outline)),
+                  Text('去药品管理添加药品和用药计划', style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
                 ],
               ),
             ),
@@ -552,7 +552,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   Text(reminder.medicineName,
                       style: tt.bodyLarge?.copyWith(
                         decoration: isTaken ? TextDecoration.lineThrough : null,
-                        color: isTaken ? cs.outline : null,
+                        color: isTaken ? cs.onSurface.withAlpha(128) : null,
                       )),
                   const SizedBox(height: 2),
                   Row(
@@ -837,7 +837,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             ),
             const SizedBox(height: 4),
             Text('非诊断结果，仅用于长期趋势管理',
-                style: tt.labelMedium?.copyWith(color: cs.outline)),
+                style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant)),
             const SizedBox(height: 16),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -873,7 +873,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text('数据不足，仅作粗略参考 · 提升服药完成率可进一步降低风险',
-                      style: tt.labelMedium?.copyWith(color: cs.outline)),
+                      style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant)),
                 ),
               ],
             ),
@@ -1021,7 +1021,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 const SizedBox(height: 12),
                 Text('暂无药品', style: tt.bodyLarge?.copyWith(color: cs.onSurfaceVariant)),
                 const SizedBox(height: 4),
-                Text('点击右下角添加', style: tt.bodyMedium?.copyWith(color: cs.outline)),
+                Text('点击右下角添加', style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
               ],
             ),
           );
