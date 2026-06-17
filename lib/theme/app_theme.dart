@@ -24,6 +24,7 @@ class AppTheme {
       primary: deepRed,
       primaryContainer: primaryContainerColor,
       onPrimaryContainer: const Color(0xFFFFFFFF),
+      onSecondaryContainer: const Color(0xFF2D0A14),
       tertiary: roseColor,
       secondaryContainer: lightPinkColor,
     );
