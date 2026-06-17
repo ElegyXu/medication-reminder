@@ -5,7 +5,6 @@ import '../../providers/medicine_provider.dart';
 import '../../providers/schedule_provider.dart';
 import '../../providers/reminder_provider.dart';
 import '../../models/reminder.dart';
-import '../../theme/app_theme.dart';
 import '../../models/medicine.dart';
 import '../../widgets/reminder_bottom_sheet.dart';
 import '../../utils/lunar_calendar.dart';
@@ -78,12 +77,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     }
   }
 
-  Color _getStatusColor(ReminderStatus status) {
+  Color _getStatusColor(ReminderStatus status, ColorScheme cs) {
     switch (status) {
-      case ReminderStatus.taken: return Colors.green;
-      case ReminderStatus.skipped: return Colors.orange;
-      case ReminderStatus.pending: return AppTheme.primaryColor;
-      case ReminderStatus.missed: return Colors.red;
+      case ReminderStatus.taken: return cs.primary;
+      case ReminderStatus.skipped: return cs.tertiary;
+      case ReminderStatus.pending: return cs.primary;
+      case ReminderStatus.missed: return cs.error;
     }
   }
 
@@ -91,6 +90,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final tt = Theme.of(context).textTheme;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_tabTitles[_currentTab]),
@@ -105,11 +107,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           key: ValueKey(_currentTab),
           index: _currentTab,
           children: [
-            _buildHomeTab(),
+            _buildHomeTab(cs, tt),
             const ScheduleListScreen(embedded: true),
-            _buildMedicineTab(),
-            _buildStatsTab(),
-            _buildProfileTab(),
+            _buildMedicineTab(cs, tt),
+            _buildStatsTab(cs, tt),
+            _buildProfileTab(cs, tt),
           ],
         ),
       ),
@@ -167,11 +169,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   // ===========================
   // 标签0：主页
   // ===========================
-  Widget _buildHomeTab() {
+  Widget _buildHomeTab(ColorScheme cs, TextTheme tt) {
     final now = DateTime.now();
     final weekdays = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
     final dateStr = '${now.month}月${now.day}日 ${weekdays[now.weekday - 1]}';
-    final header = _buildFlexibleHeader(dateStr: dateStr);
+    final header = _buildFlexibleHeader(dateStr: dateStr, cs: cs, tt: tt);
 
     return RefreshIndicator(
       onRefresh: _onRefresh,
@@ -179,39 +181,43 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         slivers: [
           SliverAppBar(
             expandedHeight: 180,
-            pinned: false,
+            pinned: true,
             floating: false,
-            backgroundColor: const Color(0xFFC41E3A),
+            backgroundColor: cs.surface,
             flexibleSpace: FlexibleSpaceBar(
               background: header,
             ),
           ),
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
                 (context, index) => switch (index) {
-                  0 => _buildProgressRow(),
-                  1 => const SizedBox(height: 14),
-                  2 => _buildWeekStrip(),
-                  3 => const SizedBox(height: 12),
-                  4 => _buildStreakFooter(),
+                  0 => _buildProgressRow(cs, tt),
+                  1 => const SizedBox(height: 16),
+                  2 => _buildWeekStrip(cs, tt),
+                  3 => const SizedBox(height: 16),
+                  4 => _buildStreakFooter(cs, tt),
                   5 => const SizedBox(height: 16),
-                  6 => _buildPeriodSections(),
-                  7 => const SizedBox(height: 400), // ensure SliverAppBar can always scroll away
+                  6 => _buildPeriodSections(cs, tt),
                   _ => null,
                 },
-                childCount: 8,
+                childCount: 7,
               ),
             ),
+          ),
+          SliverFillRemaining(
+            hasScrollBody: false,
+            fillOverscroll: true,
+            child: const SizedBox.shrink(),
           ),
         ],
       ),
     );
   }
 
-  // --- 可折叠头部（SliverAppBar flexibleSpace）---
-  Widget _buildFlexibleHeader({required String dateStr}) {
+  // --- 可折叠头部 ---
+  Widget _buildFlexibleHeader({required String dateStr, required ColorScheme cs, required TextTheme tt}) {
     final now = DateTime.now();
     final hour = now.hour;
     final randomGreetings = <String>[
@@ -227,11 +233,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     final lunarDate = LunarCalendar.getLunarDate(now);
 
     return Container(
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
+        color: cs.surface,
         gradient: LinearGradient(
-          colors: [Color(0xFFD32F2F), Color(0xFFC41E3A), Color(0xFFB71C1C)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          colors: [cs.primaryContainer, cs.surface],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
       ),
       padding: const EdgeInsets.fromLTRB(16, 56, 16, 24),
@@ -240,20 +247,20 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(randomGreeting,
-              style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.bold)),
+              style: tt.headlineSmall?.copyWith(color: cs.onPrimaryContainer)),
           const SizedBox(height: 8),
           Text(dateStr,
-              style: const TextStyle(color: Colors.white70, fontSize: 17)),
+              style: tt.titleMedium?.copyWith(color: cs.onPrimaryContainer.withAlpha(180))),
           const SizedBox(height: 4),
           Text(lunarDate,
-              style: const TextStyle(color: Colors.white54, fontSize: 15)),
+              style: tt.bodyMedium?.copyWith(color: cs.onPrimaryContainer.withAlpha(140))),
         ],
       ),
     );
   }
 
-  // --- 用药进度（Material Design 3） ---
-  Widget _buildProgressRow() {
+  // --- 用药进度 ---
+  Widget _buildProgressRow(ColorScheme cs, TextTheme tt) {
     return Consumer<ReminderProvider>(
       builder: (context, provider, _) {
         final total = provider.todayStats['total'] ?? 0;
@@ -273,22 +280,22 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: const Color(0xFFC41E3A).withAlpha(25),
+                        color: cs.primary.withAlpha(25),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.medication, color: Color(0xFFC41E3A), size: 22),
+                      child: Icon(Icons.medication, color: cs.primary, size: 22),
                     ),
                     const SizedBox(width: 12),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('今日用药', style: TextStyle(color: Colors.grey.shade600, fontSize: 13, fontWeight: FontWeight.w500)),
+                        Text('今日用药', style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant)),
                         const SizedBox(height: 2),
                         RichText(
                           text: TextSpan(
                             children: [
-                              TextSpan(text: '$taken', style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: Color(0xFFC41E3A))),
-                              TextSpan(text: ' / $total', style: TextStyle(fontSize: 18, color: Colors.grey.shade400, fontWeight: FontWeight.w500)),
+                              TextSpan(text: '$taken', style: tt.headlineSmall?.copyWith(color: cs.primary)),
+                              TextSpan(text: ' / $total', style: tt.titleLarge?.copyWith(color: cs.outline)),
                             ],
                           ),
                         ),
@@ -299,15 +306,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFC41E3A).withAlpha(20),
+                          color: cs.primaryContainer,
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Row(
+                        child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.check_circle, color: Color(0xFFC41E3A), size: 16),
-                            SizedBox(width: 4),
-                            Text('全部完成', style: TextStyle(color: Color(0xFFC41E3A), fontSize: 13, fontWeight: FontWeight.w600)),
+                            Icon(Icons.check_circle, color: cs.onPrimaryContainer, size: 16),
+                            const SizedBox(width: 4),
+                            Text('全部完成', style: tt.labelMedium?.copyWith(color: cs.onPrimaryContainer)),
                           ],
                         ),
                       ),
@@ -319,15 +326,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     borderRadius: BorderRadius.circular(4),
                     child: LinearProgressIndicator(
                       value: ratio,
-                      backgroundColor: const Color(0xFFC41E3A).withAlpha(20),
-                      valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFFC41E3A)),
+                      backgroundColor: cs.surfaceContainerHighest,
+                      valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
                       minHeight: 8,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
                     ratio >= 1.0 ? '太棒了，今天全部完成！' : '还剩 ${total - taken} 次用药待打卡',
-                    style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                    style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant),
                   ),
                 ],
               ],
@@ -338,15 +345,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     );
   }
 
-  // --- 周历（独立区块）---
-  Widget _buildWeekStrip() {
+  // --- 周历 ---
+  Widget _buildWeekStrip(ColorScheme cs, TextTheme tt) {
     final now = DateTime.now();
     final today = now.weekday;
     final monday = now.subtract(Duration(days: today - 1));
     final labels = ['一', '二', '三', '四', '五', '六', '日'];
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 8),
         child: Row(
@@ -358,31 +365,30 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
 
             return Column(
               children: [
-                Text(labels[i], style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+                Text(labels[i], style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant)),
                 const SizedBox(height: 4),
                 Container(
                   width: 36,
                   height: 36,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isToday ? const Color(0xFFC41E3A) : Colors.transparent,
+                    color: isToday ? cs.primaryContainer : Colors.transparent,
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     '${date.day}',
-                    style: TextStyle(
-                      fontSize: 15,
+                    style: tt.bodyMedium?.copyWith(
                       fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                      color: isToday ? Colors.white : Colors.grey.shade700,
+                      color: isToday ? cs.onPrimaryContainer : cs.onSurface,
                     ),
                   ),
                 ),
                 const SizedBox(height: 3),
                 Container(
-                  width: 5,
-                  height: 5,
+                  width: 8,
+                  height: 8,
                   decoration: BoxDecoration(
-                    color: hasReminders ? const Color(0xFFC41E3A) : Colors.transparent,
+                    color: hasReminders ? cs.primary : Colors.transparent,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -403,15 +409,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   }
 
   // --- 连续服药 ---
-  Widget _buildStreakFooter() {
+  Widget _buildStreakFooter(ColorScheme cs, TextTheme tt) {
     return Consumer<ReminderProvider>(
       builder: (context, provider, _) {
         return Row(
           children: [
-            Icon(Icons.local_fire_department, size: 18, color: const Color(0xFFC41E3A)),
+            Icon(Icons.local_fire_department, size: 18, color: cs.primary),
             const SizedBox(width: 4),
             Text('已连续服药 ${provider.consecutiveDays} 天',
-                style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+                style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant)),
           ],
         );
       },
@@ -419,7 +425,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   }
 
   // --- 时段分组药品 ---
-  Widget _buildPeriodSections() {
+  Widget _buildPeriodSections(ColorScheme cs, TextTheme tt) {
     return Consumer<ReminderProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading) {
@@ -436,18 +442,17 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               padding: const EdgeInsets.all(32),
               child: Column(
                 children: [
-                  Icon(Icons.medication_outlined, size: 48, color: Colors.grey.shade400),
+                  Icon(Icons.medication_outlined, size: 48, color: cs.outline),
                   const SizedBox(height: 12),
-                  Text('今日暂无用药计划', style: TextStyle(color: Colors.grey.shade600, fontSize: 16)),
+                  Text('今日暂无用药计划', style: tt.bodyLarge?.copyWith(color: cs.onSurfaceVariant)),
                   const SizedBox(height: 4),
-                  Text('去药品管理添加药品和用药计划', style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+                  Text('去药品管理添加药品和用药计划', style: tt.bodyMedium?.copyWith(color: cs.outline)),
                 ],
               ),
             ),
           );
         }
 
-        // Group by period: 早上 06:00-11:59, 中午 12:00-17:59, 晚上 18:00-23:59
         final morning = reminders.where((r) => r.scheduledTime.hour >= 6 && r.scheduledTime.hour < 12).toList();
         final noon = reminders.where((r) => r.scheduledTime.hour >= 12 && r.scheduledTime.hour < 18).toList();
         final evening = reminders.where((r) => r.scheduledTime.hour >= 18 || r.scheduledTime.hour < 6).toList();
@@ -456,7 +461,6 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         noon.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
         evening.sort((a, b) => a.scheduledTime.compareTo(b.scheduledTime));
 
-        // Only show periods that have reminders
         final periods = <_PeriodData>[
           if (morning.isNotEmpty) _PeriodData('早上', Icons.wb_sunny_outlined, morning),
           if (noon.isNotEmpty) _PeriodData('中午', Icons.wb_cloudy_outlined, noon),
@@ -464,13 +468,13 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         ];
 
         return Column(
-          children: periods.map((p) => _buildPeriodSection(p, context)).toList(),
+          children: periods.map((p) => _buildPeriodSection(p, context, cs, tt)).toList(),
         );
       },
     );
   }
 
-  Widget _buildPeriodSection(_PeriodData period, BuildContext context) {
+  Widget _buildPeriodSection(_PeriodData period, BuildContext context, ColorScheme cs, TextTheme tt) {
     final takenCount = period.reminders.where((r) => r.status == ReminderStatus.taken).length;
     final total = period.reminders.length;
 
@@ -481,30 +485,45 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           padding: const EdgeInsets.only(bottom: 8),
           child: Row(
             children: [
-              Icon(period.icon, size: 20, color: AppTheme.primaryColor),
+              Icon(period.icon, size: 20, color: cs.primary),
               const SizedBox(width: 6),
-              Text(period.name, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+              Text(period.name, style: tt.titleMedium),
               const Spacer(),
               Text('$takenCount/$total',
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: takenCount == total ? const Color(0xFFC41E3A) : Colors.grey.shade600,
+                  style: tt.bodyMedium?.copyWith(
+                    color: takenCount == total ? cs.primary : cs.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   )),
             ],
           ),
         ),
-        ...period.reminders.map((r) => _buildMedicineCard(r, context)),
+        ...period.reminders.map((r) => _buildMedicineCard(r, context, cs, tt)),
         const SizedBox(height: 12),
       ],
     );
   }
 
-  Widget _buildMedicineCard(Reminder reminder, BuildContext context) {
+  Widget _buildMedicineCard(Reminder reminder, BuildContext context, ColorScheme cs, TextTheme tt) {
     final isTaken = reminder.status == ReminderStatus.taken;
     final isSkipped = reminder.status == ReminderStatus.skipped;
     final isMissed = reminder.status == ReminderStatus.missed;
     final canAct = reminder.status == ReminderStatus.pending;
+
+    Color chipBg;
+    Color chipFg;
+    if (isTaken) {
+      chipBg = cs.primaryContainer.withAlpha(40);
+      chipFg = cs.primary;
+    } else if (isSkipped) {
+      chipBg = cs.tertiaryContainer.withAlpha(40);
+      chipFg = cs.tertiary;
+    } else if (isMissed) {
+      chipBg = cs.errorContainer.withAlpha(60);
+      chipFg = cs.error;
+    } else {
+      chipBg = cs.primary.withAlpha(20);
+      chipFg = cs.primary;
+    }
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
@@ -516,18 +535,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: isTaken ? Colors.green.shade50
-                    : isSkipped ? Colors.orange.shade50
-                    : isMissed ? Colors.red.shade50
-                    : AppTheme.primaryColor.withAlpha(20),
+                color: chipBg,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Icon(
                 Icons.medication,
-                color: isTaken ? Colors.green
-                    : isSkipped ? Colors.orange
-                    : isMissed ? Colors.red
-                    : AppTheme.primaryColor,
+                color: chipFg,
                 size: 24,
               ),
             ),
@@ -537,11 +550,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(reminder.medicineName,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
+                      style: tt.bodyLarge?.copyWith(
                         decoration: isTaken ? TextDecoration.lineThrough : null,
-                        color: isTaken ? Colors.grey : null,
+                        color: isTaken ? cs.outline : null,
                       )),
                   const SizedBox(height: 2),
                   Row(
@@ -549,17 +560,17 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                         decoration: BoxDecoration(
-                          color: const Color(0xFFC41E3A).withAlpha(25),
+                          color: cs.primary.withAlpha(25),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
                           DateFormat('HH:mm').format(reminder.scheduledTime),
-                          style: TextStyle(color: const Color(0xFFC41E3A), fontSize: 12, fontWeight: FontWeight.w500),
+                          style: tt.labelMedium?.copyWith(color: cs.primary),
                         ),
                       ),
                       const SizedBox(width: 8),
                       Text(reminder.dosage,
-                          style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+                          style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
                     ],
                   ),
                 ],
@@ -571,8 +582,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 child: ElevatedButton(
                   onPressed: () => context.read<ReminderProvider>().takeMedicine(reminder),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primaryColor,
-                    foregroundColor: Colors.white,
+                    backgroundColor: cs.primary,
+                    foregroundColor: cs.onPrimary,
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                     textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
@@ -584,20 +595,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: isTaken ? Colors.green.shade50
-                      : isSkipped ? Colors.orange.shade50
-                      : Colors.red.shade50,
+                  color: chipBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   _getStatusLabel(reminder.status),
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: isTaken ? Colors.green
-                        : isSkipped ? Colors.orange
-                        : Colors.red,
-                  ),
+                  style: tt.labelMedium?.copyWith(color: chipFg),
                 ),
               ),
           ],
@@ -615,15 +618,15 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     }
   }
 
-  Widget _buildQuickEntry({required IconData icon, required String title, required String subtitle, required VoidCallback onTap}) {
+  Widget _buildQuickEntry({required IconData icon, required String title, required String subtitle, required VoidCallback onTap, required ColorScheme cs}) {
     return ListTile(
       leading: CircleAvatar(
-        backgroundColor: AppTheme.primaryColor.withAlpha(20),
-        child: Icon(icon, color: AppTheme.primaryColor, size: 22),
+        backgroundColor: cs.primary.withAlpha(20),
+        child: Icon(icon, color: cs.primary, size: 22),
       ),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-      subtitle: Text(subtitle, style: TextStyle(color: Colors.grey.shade500, fontSize: 13)),
-      trailing: const Icon(Icons.chevron_right),
+      subtitle: Text(subtitle, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
+      trailing: Icon(Icons.chevron_right, color: cs.outline),
       onTap: onTap,
     );
   }
@@ -631,7 +634,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   // ===========================
   // 标签3：服药统计
   // ===========================
-  Widget _buildStatsTab() {
+  Widget _buildStatsTab(ColorScheme cs, TextTheme tt) {
     return Consumer<ReminderProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading) {
@@ -652,33 +655,29 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           child: ListView(
             padding: const EdgeInsets.all(16),
             children: [
-              // 时间范围选择器
-              _buildPeriodSelector(),
+              _buildPeriodSelector(cs),
               const SizedBox(height: 16),
-
-              // 数据统计总览
               _buildStatsOverview(
                 total: todayTotal,
                 taken: todayTaken,
                 missed: todayMissed + todaySkipped,
                 adherence: adherence,
+                cs: cs,
               ),
               const SizedBox(height: 16),
-
-              // 10年健康风险评估
               _buildHealthRiskCard(
                 riskPct: riskPct,
                 adherence: adherence,
                 adherencePct: adherencePct,
+                cs: cs,
+                tt: tt,
               ),
               const SizedBox(height: 16),
-
-              // 提醒记录
               if (provider.todayReminders.isNotEmpty) ...[
                 Text('今日提醒记录',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
+                    style: tt.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
-                ...provider.todayReminders.map((r) => _buildReminderTile(r, context)),
+                ...provider.todayReminders.map((r) => _buildReminderTile(r, context, cs, tt)),
               ],
             ],
           ),
@@ -687,7 +686,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     );
   }
 
-  Widget _buildPeriodSelector() {
+  Widget _buildPeriodSelector(ColorScheme cs) {
     final periods = [
       {'key': 'week', 'label': '本周'},
       {'key': 'month', 'label': '本月'},
@@ -703,10 +702,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             label: Text(p['label']!),
             selected: selected,
             onSelected: (_) => setState(() => _statsPeriod = p['key']!),
-            selectedColor: Colors.pink.shade50,
-            backgroundColor: Colors.grey.shade100,
+            selectedColor: cs.secondaryContainer,
+            backgroundColor: cs.surfaceContainerHighest,
             labelStyle: TextStyle(
-              color: selected ? Colors.pink.shade700 : Colors.grey.shade600,
+              color: selected ? cs.onSecondaryContainer : cs.onSurface,
               fontSize: 13,
               fontWeight: selected ? FontWeight.w600 : FontWeight.normal,
             ),
@@ -723,9 +722,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     required int taken,
     required int missed,
     required double adherence,
+    required ColorScheme cs,
   }) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -733,7 +733,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           children: [
             Row(
               children: [
-                Icon(Icons.bar_chart, size: 20, color: Colors.orange.shade700),
+                Icon(Icons.bar_chart, size: 20, color: cs.tertiary),
                 const SizedBox(width: 8),
                 const Text('数据统计总览',
                     style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
@@ -741,12 +741,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
+                    color: cs.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
                     _statsPeriod == 'week' ? '最近一周' : _statsPeriod == 'month' ? '最近一月' : '近三月',
-                    style: TextStyle(color: Colors.grey.shade500, fontSize: 12),
+                    style: TextStyle(color: cs.onSurfaceVariant, fontSize: 12),
                   ),
                 ),
               ],
@@ -754,10 +754,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             const SizedBox(height: 16),
             Row(
               children: [
-                _buildStatCell('计划服药', '$total次', Colors.orange.shade700),
-                _buildStatCell('已服药', '$taken次', Colors.green.shade600),
-                _buildStatCell('漏服', '$missed次', Colors.red.shade500),
-                _buildStatCell('完成率', '${(adherence * 100).toStringAsFixed(1)}%', Colors.orange.shade700),
+                _buildStatCell('计划服药', '$total次', cs.primary, cs),
+                _buildStatCell('已服药', '$taken次', cs.primary, cs),
+                _buildStatCell('漏服', '$missed次', cs.error, cs),
+                _buildStatCell('完成率', '${(adherence * 100).toStringAsFixed(1)}%', cs.tertiary, cs),
               ],
             ),
           ],
@@ -766,7 +766,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     );
   }
 
-  Widget _buildStatCell(String label, String value, Color color) {
+  Widget _buildStatCell(String label, String value, Color color, ColorScheme cs) {
     return Expanded(
       child: Column(
         children: [
@@ -779,7 +779,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           const SizedBox(height: 4),
           Text(label,
               style: TextStyle(
-                color: Colors.grey.shade500,
+                color: cs.onSurfaceVariant,
                 fontSize: 12,
               )),
         ],
@@ -791,28 +791,29 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     required double riskPct,
     required double adherence,
     required String adherencePct,
+    required ColorScheme cs,
+    required TextTheme tt,
   }) {
     final riskLevel = riskPct >= 20 ? '高风险' : riskPct >= 10 ? '中等风险' : '低风险';
-    final riskColor = riskPct >= 20 ? Colors.red : riskPct >= 10 ? Colors.orange : Colors.green;
+    final riskColor = riskPct >= 20 ? cs.error : riskPct >= 10 ? cs.tertiary : cs.primary;
     final needAttention = riskPct >= 10;
 
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: riskColor.shade50,
+                    color: riskColor.withAlpha(30),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(Icons.shield_outlined, size: 20, color: riskColor.shade700),
+                  child: Icon(Icons.shield_outlined, size: 20, color: riskColor),
                 ),
                 const SizedBox(width: 10),
                 const Expanded(
@@ -822,12 +823,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: riskColor.shade50,
+                    color: riskColor.withAlpha(30),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(riskLevel,
                       style: TextStyle(
-                        color: riskColor.shade700,
+                        color: riskColor,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       )),
@@ -836,10 +837,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             ),
             const SizedBox(height: 4),
             Text('非诊断结果，仅用于长期趋势管理',
-                style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                style: tt.labelMedium?.copyWith(color: cs.outline)),
             const SizedBox(height: 16),
-
-            // Risk percentage
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
@@ -847,60 +846,53 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     style: TextStyle(
                       fontSize: 36,
                       fontWeight: FontWeight.bold,
-                      color: riskColor.shade700,
+                      color: riskColor,
                     )),
                 const SizedBox(width: 8),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Text(needAttention ? '需要关注' : '状况良好',
-                      style: TextStyle(color: Colors.grey.shade500, fontSize: 14)),
+                      style: tt.bodyMedium?.copyWith(color: cs.onSurfaceVariant)),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-
-            // Progress bar
             ClipRRect(
               borderRadius: BorderRadius.circular(4),
               child: LinearProgressIndicator(
                 value: (riskPct / 50).clamp(0.0, 1.0),
-                backgroundColor: Colors.grey.shade200,
-                valueColor: AlwaysStoppedAnimation<Color>(riskColor.shade400),
+                backgroundColor: cs.surfaceContainerHighest,
+                valueColor: AlwaysStoppedAnimation<Color>(riskColor),
                 minHeight: 8,
               ),
             ),
             const SizedBox(height: 12),
-
-            // Data note
             Row(
               children: [
-                Icon(Icons.access_time, size: 14, color: Colors.grey.shade400),
+                Icon(Icons.access_time, size: 14, color: cs.outline),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text('数据不足，仅作粗略参考 · 提升服药完成率可进一步降低风险',
-                      style: TextStyle(color: Colors.grey.shade400, fontSize: 12)),
+                      style: tt.labelMedium?.copyWith(color: cs.outline)),
                 ),
               ],
             ),
             const SizedBox(height: 12),
-
-            // Adherence warning
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: Colors.amber.shade50,
+                color: cs.errorContainer,
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.warning_amber_rounded, size: 16, color: Colors.amber.shade700),
+                  Icon(Icons.warning_amber_rounded, size: 16, color: cs.error),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text('服药依从性：当前周期完成率 $adherencePct%',
-                        style: TextStyle(
-                          color: Colors.amber.shade900,
-                          fontSize: 13,
+                        style: tt.labelMedium?.copyWith(
+                          color: cs.onErrorContainer,
                           fontWeight: FontWeight.w500,
                         )),
                   ),
@@ -908,20 +900,18 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               ),
             ),
             const SizedBox(height: 10),
-
-            // Suggestions
             if (adherence < 0.8) ...[
-              _buildSuggestion('把漏服较多的时段设置为强提醒，优先把完成率拉回 80% 以上。'),
+              _buildSuggestion('把漏服较多的时段设置为强提醒，优先把完成率拉回 80% 以上。', cs),
               const SizedBox(height: 6),
             ],
-            _buildSuggestion('补齐出生日期、性别、血压后，评估会更稳定。'),
+            _buildSuggestion('补齐出生日期、性别、血压后，评估会更稳定。', cs),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSuggestion(String text) {
+  Widget _buildSuggestion(String text, ColorScheme cs) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -931,7 +921,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: Colors.orange.shade400,
+              color: cs.primary,
               shape: BoxShape.circle,
             ),
           ),
@@ -939,7 +929,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         const SizedBox(width: 10),
         Expanded(
           child: Text(text,
-              style: TextStyle(color: Colors.grey.shade700, fontSize: 13, height: 1.4)),
+              style: TextStyle(color: cs.onSurface, fontSize: 13, height: 1.4)),
         ),
       ],
     );
@@ -953,32 +943,33 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     return 25.0;
   }
 
-  Widget _buildReminderTile(Reminder reminder, BuildContext context) {
+  Widget _buildReminderTile(Reminder reminder, BuildContext context, ColorScheme cs, TextTheme tt) {
     final isPending = reminder.status == ReminderStatus.pending;
     final isPassed = reminder.scheduledTime.isBefore(DateTime.now());
+    final statusColor = _getStatusColor(reminder.status, cs);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: _getStatusColor(reminder.status).withAlpha(30),
+          backgroundColor: statusColor.withAlpha(30),
           child: Icon(
             _getStatusIcon(reminder.status),
-            color: _getStatusColor(reminder.status),
+            color: statusColor,
             size: 22,
           ),
         ),
         title: Text(
           '${reminder.medicineName} · ${reminder.dosage}',
-          style: const TextStyle(fontWeight: FontWeight.w500),
+          style: tt.bodyLarge,
         ),
         subtitle: Text(
           '${_formatTime(reminder.scheduledTime)}  ${reminder.statusLabel}',
-          style: TextStyle(color: _getStatusColor(reminder.status), fontSize: 13),
+          style: tt.labelMedium?.copyWith(color: statusColor),
         ),
         trailing: isPending && isPassed
             ? IconButton(
-                icon: const Icon(Icons.more_horiz, color: Color(0xFFFF6B35)),
+                icon: Icon(Icons.more_horiz, color: cs.tertiary),
                 onPressed: () {
                   showModalBottomSheet(
                     context: context,
@@ -996,9 +987,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   }
 
   // ===========================
-  // 标签3：药品管理
+  // 标签2：药品管理
   // ===========================
-  Widget _buildMedicineTab() {
+  Widget _buildMedicineTab(ColorScheme cs, TextTheme tt) {
     return Consumer<MedicineProvider>(
       builder: (context, provider, _) {
         if (provider.isLoading) {
@@ -1012,7 +1003,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(provider.errorMessage!, style: const TextStyle(color: Colors.red, fontSize: 14)),
+                  Text(provider.errorMessage!, style: tt.bodyMedium?.copyWith(color: cs.error)),
                   const SizedBox(height: 12),
                   OutlinedButton(onPressed: () => provider.loadMedicines(), child: const Text('重试')),
                 ],
@@ -1026,11 +1017,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.medication_outlined, size: 64, color: Colors.grey.shade300),
+                Icon(Icons.medication_outlined, size: 48, color: cs.outline),
                 const SizedBox(height: 12),
-                Text('暂无药品', style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
+                Text('暂无药品', style: tt.bodyLarge?.copyWith(color: cs.onSurfaceVariant)),
                 const SizedBox(height: 4),
-                Text('点击右下角添加', style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+                Text('点击右下角添加', style: tt.bodyMedium?.copyWith(color: cs.outline)),
               ],
             ),
           );
@@ -1050,11 +1041,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     backgroundColor: Color(medicine.colorValue).withAlpha(30),
                     child: Icon(Icons.medication, color: Color(medicine.colorValue), size: 22),
                   ),
-                  title: Text(medicine.name, style: const TextStyle(fontWeight: FontWeight.w500)),
+                  title: Text(medicine.name, style: tt.bodyLarge),
                   subtitle: Text('${medicine.specification}  ·  ${medicine.dosageForm}'),
                   trailing: Switch(
                     value: medicine.isActive,
-                    activeTrackColor: AppTheme.primaryColor,
                     onChanged: (_) => provider.toggleMedicineActive(medicine),
                   ),
                   onTap: () => _navigateToMedicineForm(context, medicine: medicine),
@@ -1071,7 +1061,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   // ===========================
   // 标签4：我的
   // ===========================
-  Widget _buildProfileTab() {
+  Widget _buildProfileTab(ColorScheme cs, TextTheme tt) {
     return Consumer<ReminderProvider>(
       builder: (context, provider, _) {
         return RefreshIndicator(
@@ -1087,22 +1077,22 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     children: [
                       CircleAvatar(
                         radius: 30,
-                        backgroundColor: AppTheme.primaryColor.withAlpha(30),
-                        child: const Icon(Icons.person, size: 32, color: AppTheme.primaryColor),
+                        backgroundColor: cs.primaryContainer,
+                        child: Icon(Icons.person, size: 32, color: cs.onPrimaryContainer),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('用户', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                            Text('用户', style: tt.titleMedium),
                             const SizedBox(height: 4),
                             Text('连续用药 ${provider.consecutiveDays} 天',
-                              style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+                              style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant)),
                           ],
                         ),
                       ),
-                      Icon(Icons.chevron_right, color: Colors.grey.shade400),
+                      Icon(Icons.chevron_right, color: cs.outline),
                     ],
                   ),
                 ),
@@ -1114,28 +1104,28 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   padding: const EdgeInsets.all(20),
                   child: Column(
                     children: [
-                      const Text('服药统计', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+                      Text('服药统计', style: tt.titleMedium),
                       const SizedBox(height: 20),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          _buildStatItem('今日已服', '${provider.todayStats['taken']}', Colors.green),
-                          _buildStatItem('今日待服', '${provider.todayStats['total']! - provider.todayStats['taken']!}', AppTheme.primaryColor),
-                          _buildStatItem('连续天数', '${provider.consecutiveDays}', Colors.orange),
+                          _buildStatItem('今日已服', '${provider.todayStats['taken']}', cs.primary, cs),
+                          _buildStatItem('今日待服', '${provider.todayStats['total']! - provider.todayStats['taken']!}', cs.tertiary, cs),
+                          _buildStatItem('连续天数', '${provider.consecutiveDays}', cs.tertiary, cs),
                         ],
                       ),
                       const SizedBox(height: 16),
                       Text(
                         '依从率: ${(provider.todayAdherence * 100).toStringAsFixed(0)}%',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                        style: tt.bodyLarge,
                       ),
                       const SizedBox(height: 8),
                       ClipRRect(
                         borderRadius: BorderRadius.circular(4),
                         child: LinearProgressIndicator(
                           value: provider.todayAdherence,
-                          backgroundColor: Colors.grey.shade200,
-                          valueColor: const AlwaysStoppedAnimation<Color>(AppTheme.primaryColor),
+                          backgroundColor: cs.surfaceContainerHighest,
+                          valueColor: AlwaysStoppedAnimation<Color>(cs.primary),
                           minHeight: 8,
                         ),
                       ),
@@ -1151,32 +1141,37 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('快捷入口', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                      Text('快捷入口', style: tt.titleMedium),
                       const SizedBox(height: 12),
                       _buildQuickEntry(
                         icon: Icons.edit_note,
                         title: '症状日记',
                         subtitle: '记录身体症状',
                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SymptomDiaryScreen())),
+                        cs: cs,
                       ),
                       _buildQuickEntry(
                         icon: Icons.people_outline,
                         title: '家属监护',
                         subtitle: '管理家属绑定与查看',
                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const GuardianHomeScreen())),
+                        cs: cs,
                       ),
                       _buildQuickEntry(
                         icon: Icons.schedule,
                         title: '用药计划',
                         subtitle: '管理用药计划',
                         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ScheduleListScreen())),
+                        cs: cs,
                       ),
                       const Divider(height: 24),
-                      _buildQuickEntry(
-                        icon: Icons.info_outline,
-                        title: '关于',
-                        subtitle: '家庭用药管家 v1.0.1',
-                        onTap: () {},
+                      ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: cs.surfaceContainerHighest,
+                          child: Icon(Icons.info_outline, color: cs.onSurfaceVariant, size: 22),
+                        ),
+                        title: Text('关于', style: tt.bodyLarge),
+                        subtitle: Text('家庭用药管家 v1.0.1', style: tt.labelMedium?.copyWith(color: cs.onSurfaceVariant)),
                       ),
                     ],
                   ),
@@ -1189,12 +1184,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     );
   }
 
-  Widget _buildStatItem(String label, String value, Color color) {
+  Widget _buildStatItem(String label, String value, Color color, ColorScheme cs) {
     return Column(
       children: [
         Text(value, style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: color)),
         const SizedBox(height: 4),
-        Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
+        Text(label, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
       ],
     );
   }
@@ -1214,7 +1209,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         label: Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
         elevation: 2,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),
     );
   }
