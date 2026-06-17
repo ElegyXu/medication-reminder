@@ -6,6 +6,7 @@ import 'package:medication_reminder/providers/medicine_provider.dart';
 import 'package:medication_reminder/providers/schedule_provider.dart';
 import 'package:medication_reminder/providers/reminder_provider.dart';
 import 'package:medication_reminder/screens/home/patient_home_screen.dart';
+import 'package:medication_reminder/theme/app_theme.dart';
 
 void main() {
   setUpAll(() {
@@ -20,8 +21,9 @@ void main() {
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
         ChangeNotifierProvider(create: (_) => ReminderProvider()),
       ],
-      child: const MaterialApp(
-        home: PatientHomeScreen(initialTab: 0),
+      child: MaterialApp(
+        theme: AppTheme.lightTheme,
+        home: const PatientHomeScreen(initialTab: 0),
       ),
     );
   }
@@ -36,13 +38,13 @@ void main() {
 
       expect(find.byType(CustomScrollView), findsOneWidget);
       final appBar = tester.widget<SliverAppBar>(find.byType(SliverAppBar));
-      expect(appBar.pinned, isFalse);
+      expect(appBar.pinned, isTrue);
       expect(appBar.floating, isFalse);
       expect(appBar.expandedHeight, 180);
-      expect(appBar.backgroundColor, const Color(0xFFC41E3A));
+      expect(appBar.backgroundColor, AppTheme.surfaceColor);
 
       final sliverPadding = tester.widget<SliverPadding>(find.byType(SliverPadding));
-      expect(sliverPadding.padding, const EdgeInsets.fromLTRB(16, 12, 16, 16));
+      expect(sliverPadding.padding, const EdgeInsets.all(16));
 
       final navBar = tester.widget<NavigationBar>(find.byType(NavigationBar));
       expect(navBar.destinations.length, 5);
@@ -68,10 +70,10 @@ void main() {
 
       final container = tester.widget<Container>(containers.first);
       final gradient = (container.decoration as BoxDecoration).gradient as LinearGradient;
-      expect(gradient.colors.length, 3);
-      expect(gradient.colors[0], const Color(0xFFD32F2F));
-      expect(gradient.colors[1], const Color(0xFFC41E3A));
-      expect(gradient.colors[2], const Color(0xFFB71C1C));
+      // MD3: 2-stop gradient surface → primaryContainer
+      expect(gradient.colors.length, 2);
+      expect(gradient.colors[0], AppTheme.surfaceColor);
+      expect(gradient.colors[1], AppTheme.primaryContainerColor);
     });
   });
 }

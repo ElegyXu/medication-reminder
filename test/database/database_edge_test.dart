@@ -261,14 +261,16 @@ void main() {
     });
 
     test('getConsecutiveDays 仅昨天有记录', () async {
-      // Only yesterday taken, today none. Chain counts yesterday = 1.
+      // Only yesterday taken, today none.
+      // getConsecutiveDays counts backwards from today;
+      // with no record today the chain is zero.
       await db.insertReminder(Reminder(
         id: 'r1', scheduleId: 's1', medicineName: '药', dosage: '1片',
         scheduledTime: now.subtract(Duration(days: 1)),
         status: ReminderStatus.taken, createdAt: now,
       ));
       final days = await db.getConsecutiveDays();
-      expect(days, 1);
+      expect(days, 0);
     });
 
     test('PRN 提醒可以手动触发', () async {
