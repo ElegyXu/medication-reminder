@@ -160,8 +160,8 @@ class _GuardianHomeScreenState extends State<GuardianHomeScreen> {
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: AppTheme.primaryColor.withAlpha(30),
-                          child: const Icon(Icons.person, color: AppTheme.primaryColor),
+                          backgroundColor: Theme.of(context).colorScheme.primary.withAlpha(30),
+                          child: Icon(Icons.person, color: Theme.of(context).colorScheme.primary),
                         ),
                         title: Text(binding.patientNickname,
                             style: const TextStyle(fontWeight: FontWeight.w500)),

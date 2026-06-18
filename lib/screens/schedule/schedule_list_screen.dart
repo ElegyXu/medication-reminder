@@ -128,7 +128,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: AppTheme.primaryColor,
+            color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(12),
           ),
           child: const Icon(Icons.list_alt, color: Colors.white, size: 22),
@@ -346,7 +346,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                 // Active switch
                 Switch(
                   value: schedule.isActive,
-                  activeTrackColor: AppTheme.primaryColor,
+                  activeTrackColor: Theme.of(context).colorScheme.primary,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   onChanged: (_) => provider.toggleScheduleActive(schedule),
                 ),

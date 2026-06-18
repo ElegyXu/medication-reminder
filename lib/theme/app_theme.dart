@@ -1,32 +1,13 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  // 100元人民币五色体系
-  static const Color seedColor = Color(0xFFDD0022);            // 正红 → seed
-  static const Color primaryColor = Color(0xFFDD0022);         // 正红（保留兼容旧引用）
-  static const Color primaryContainerColor = Color(0xFF780018); // 最深红
-  static const Color deepRed = Color(0xFFAA0033);              // 深酒红
-  static const Color roseColor = Color(0xFFCC0044);            // 玫红
-  static const Color lightPinkColor = Color(0xFFFA8095);       // 浅粉
-
-  static const Color surfaceColor = Color(0xFFFFFBFE);
-  static const Color backgroundColor = Color(0xFFFEF7F7);
+  // Warm Coral Palette for Healthcare App
+  static const Color seedColor = Color(0xFFFF7043);
 
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: seedColor,
       brightness: Brightness.light,
-      surface: surfaceColor,
-    );
-
-    // 手动注入五色体系
-    final customScheme = colorScheme.copyWith(
-      primary: deepRed,
-      primaryContainer: primaryContainerColor,
-      onPrimaryContainer: const Color(0xFFFFFFFF),
-      onSecondaryContainer: const Color(0xFF2D0A14),
-      tertiary: roseColor,
-      secondaryContainer: lightPinkColor,
     );
 
     // ── Text Theme ──
@@ -34,8 +15,8 @@ class AppTheme {
 
     return ThemeData(
       useMaterial3: true,
-      colorScheme: customScheme,
-      scaffoldBackgroundColor: backgroundColor,
+      colorScheme: colorScheme,
+      scaffoldBackgroundColor: colorScheme.surface, // Base surface
 
       textTheme: tt.copyWith(
         headlineSmall: tt.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
@@ -49,51 +30,54 @@ class AppTheme {
       // ── AppBar ──
       appBarTheme: AppBarTheme(
         centerTitle: true,
-        backgroundColor: customScheme.surface,
-        foregroundColor: customScheme.onSurface,
+        backgroundColor: colorScheme.surface,
+        foregroundColor: colorScheme.onSurface,
         elevation: 0,
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: 0, // Flat Tonal: no shadow on scroll
         titleTextStyle: TextStyle(
-          color: customScheme.onSurface,
+          color: colorScheme.onSurface,
           fontSize: 20,
           fontWeight: FontWeight.w600,
         ),
       ),
 
-      // ── Card ──
+      // ── Card (Flat Tonal) ──
       cardTheme: CardThemeData(
-        elevation: 1,
+        elevation: 0, // No shadow
+        color: colorScheme.surfaceContainerLow, // Tonal separation
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        color: customScheme.surface,
       ),
 
-      // ── FAB ──
+      // ── FAB (Flat Tonal) ──
       floatingActionButtonTheme: FloatingActionButtonThemeData(
-        backgroundColor: deepRed,
-        foregroundColor: Colors.white,
-        elevation: 4,
+        elevation: 0, // No shadow
+        focusElevation: 0,
+        hoverElevation: 0,
+        highlightElevation: 0,
+        backgroundColor: colorScheme.primaryContainer,
+        foregroundColor: colorScheme.onPrimaryContainer,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(28),
+          borderRadius: BorderRadius.circular(16),
         ),
       ),
 
       // ── NavigationBar ──
       navigationBarTheme: NavigationBarThemeData(
-        indicatorColor: deepRed.withAlpha(30),
-        backgroundColor: customScheme.surface,
-        elevation: 2,
+        elevation: 0,
+        backgroundColor: colorScheme.surfaceContainer,
+        indicatorColor: colorScheme.secondaryContainer,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         height: 65,
       ),
 
-      // ── ElevatedButton ──
+      // ── ElevatedButton (Flat) ──
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: deepRed,
-          foregroundColor: Colors.white,
-          elevation: 0,
+          elevation: 0, // No shadow
+          backgroundColor: colorScheme.primary,
+          foregroundColor: colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -104,8 +88,8 @@ class AppTheme {
       // ── OutlinedButton ──
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: deepRed,
-          side: const BorderSide(color: deepRed),
+          foregroundColor: colorScheme.primary,
+          side: BorderSide(color: colorScheme.outline),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -116,56 +100,60 @@ class AppTheme {
       // ── Input ──
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.white,
+        fillColor: colorScheme.surfaceContainerHighest,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide.none, // Flat look
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: BorderSide(color: Colors.grey.shade300),
+          borderSide: BorderSide.none,
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
-          borderSide: const BorderSide(color: deepRed, width: 2),
+          borderSide: BorderSide(color: colorScheme.primary, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       ),
 
       // ── SnackBar ──
       snackBarTheme: SnackBarThemeData(
+        elevation: 0,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        backgroundColor: deepRed,
-        contentTextStyle: const TextStyle(color: Colors.white),
+        backgroundColor: colorScheme.inverseSurface,
+        contentTextStyle: TextStyle(color: colorScheme.onInverseSurface),
       ),
 
-      // ── Dialog ──
+      // ── Dialog (Flat Tonal) ──
       dialogTheme: DialogThemeData(
+        elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
-        backgroundColor: customScheme.surfaceContainerHigh,
+        backgroundColor: colorScheme.surfaceContainerHigh,
       ),
 
-      // ── BottomSheet ──
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: Color(0xFFFFFBFE),
-        dragHandleColor: Color(0xFF49454F),
-        shape: RoundedRectangleBorder(
+      // ── BottomSheet (Flat Tonal) ──
+      bottomSheetTheme: BottomSheetThemeData(
+        elevation: 0,
+        backgroundColor: colorScheme.surfaceContainerLow,
+        dragHandleColor: colorScheme.onSurfaceVariant,
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
         ),
       ),
 
       // ── Chip ──
       chipTheme: ChipThemeData(
-        backgroundColor: customScheme.surfaceContainerHighest,
-        selectedColor: customScheme.secondaryContainer,
+        elevation: 0,
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        selectedColor: colorScheme.secondaryContainer,
         labelStyle: TextStyle(
-          color: customScheme.onSurface,
+          color: colorScheme.onSurface,
           fontSize: 13,
           fontWeight: FontWeight.normal,
         ),
         secondaryLabelStyle: TextStyle(
-          color: customScheme.onSecondaryContainer,
+          color: colorScheme.onSecondaryContainer,
           fontSize: 13,
           fontWeight: FontWeight.w600,
         ),
@@ -178,16 +166,17 @@ class AppTheme {
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return customScheme.primaryContainer;
+              return colorScheme.secondaryContainer;
             }
-            return customScheme.surface;
+            return colorScheme.surface;
           }),
           foregroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return customScheme.onPrimaryContainer;
+              return colorScheme.onSecondaryContainer;
             }
-            return customScheme.onSurface;
+            return colorScheme.onSurface;
           }),
+          side: WidgetStateProperty.all(BorderSide(color: colorScheme.outlineVariant)),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
@@ -197,21 +186,23 @@ class AppTheme {
       // ── Switch ──
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) return customScheme.primary;
-          return customScheme.surfaceContainerHighest;
+          if (states.contains(WidgetState.selected)) return colorScheme.onPrimary;
+          return colorScheme.outline;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
-          if (states.contains(WidgetState.selected)) {
-            return customScheme.primary.withAlpha(80);
-          }
-          return customScheme.surfaceContainerHighest;
+          if (states.contains(WidgetState.selected)) return colorScheme.primary;
+          return colorScheme.surfaceContainerHighest;
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) return Colors.transparent;
+          return colorScheme.outline;
         }),
       ),
 
       // ── ProgressIndicator ──
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: customScheme.primary,
-        linearTrackColor: customScheme.surfaceContainerHighest,
+        color: colorScheme.primary,
+        linearTrackColor: colorScheme.surfaceContainerHighest,
       ),
     );
   }

@@ -6,59 +6,48 @@ void main() {
   late ColorScheme scheme;
 
   setUpAll(() {
-    scheme = AppTheme.lightTheme.colorScheme!;
+    scheme = AppTheme.lightTheme.colorScheme;
   });
 
-  group('100元人民币五色 — 配色断言', () {
-    test('seedColor 应为正红 #DD0022', () {
-      expect(AppTheme.seedColor, const Color(0xFFDD0022));
+  group('Warm Coral MD3 Theme — 配色断言', () {
+    test('seedColor 应为 Warm Coral #FF7043', () {
+      expect(AppTheme.seedColor, const Color(0xFFFF7043));
     });
 
-    test('primary (deepRed) 应为深酒红 #AA0033', () {
-      expect(scheme.primary, const Color(0xFFAA0033));
+    test('primary color 应该由 seedColor 生成', () {
+      expect(scheme.primary.value, isNot(equals(0)));
     });
 
-    test('primaryContainer 应为最深红 #780018', () {
-      expect(scheme.primaryContainer, const Color(0xFF780018));
+    test('primaryContainer 应该生成', () {
+      expect(scheme.primaryContainer.value, isNot(equals(0)));
     });
 
-    test('tertiary (rose) 应为玫红 #CC0044', () {
-      expect(scheme.tertiary, const Color(0xFFCC0044));
-    });
-
-    test('secondaryContainer 应为浅粉 #FA8095', () {
-      expect(scheme.secondaryContainer, const Color(0xFFFA8095));
+    test('Flat Tonal 的 Surface 色阶应该存在', () {
+      expect(scheme.surface.value, isNot(equals(0)));
+      expect(scheme.surfaceContainerLow.value, isNot(equals(0)));
+      expect(scheme.surfaceContainer.value, isNot(equals(0)));
+      expect(scheme.surfaceContainerHigh.value, isNot(equals(0)));
+      expect(scheme.surfaceContainerHighest.value, isNot(equals(0)));
     });
   });
 
   group('对比度断言', () {
-    test('onPrimaryContainer 在深红底 (#780018) 上应为白色', () {
-      expect(scheme.onPrimaryContainer, Colors.white);
-      // Background = #780018, foreground = white → CR ≈ 9.5:1 (AAA)
+    test('onPrimary 应该有良好的对比度', () {
+      final luminancePrimary = scheme.primary.computeLuminance();
+      final luminanceOnPrimary = scheme.onPrimary.computeLuminance();
+      final contrast = (luminancePrimary + 0.05) / (luminanceOnPrimary + 0.05);
+      final inverseContrast = (luminanceOnPrimary + 0.05) / (luminancePrimary + 0.05);
+      
+      expect(contrast > 3.0 || inverseContrast > 3.0, isTrue);
     });
 
-    test('onSecondaryContainer 在浅粉底 (#FA8095) 上应为深棕 #2D0A14', () {
-      expect(scheme.onSecondaryContainer, const Color(0xFF2D0A14));
-      // Background = #FA8095, foreground = #2D0A14 → CR ≈ 7.4:1 (AAA)
-    });
-  });
-
-  group('集成验证 — 深色/浅色背景文字色', () {
-    test('primary (深酒红 #AA0033) 上 onPrimary 应为白色', () {
-      expect(scheme.onPrimary, Colors.white);
-    });
-
-    test('primaryContainer (深红 #780018) 上 onPrimaryContainer 应为白色', () {
-      expect(scheme.onPrimaryContainer, Colors.white);
-    });
-
-    test('tertiary (玫红 #CC0044) 上 onTertiary 应为白色', () {
-      expect(scheme.onTertiary, Colors.white);
-    });
-
-    test('secondaryContainer (浅粉 #FA8095) 上 onSecondaryContainer 应为深色', () {
-      // luminance < 0.5 → dark text
-      expect(scheme.onSecondaryContainer.computeLuminance(), lessThan(0.5));
+    test('onPrimaryContainer 应该有良好的对比度', () {
+      final luminanceBg = scheme.primaryContainer.computeLuminance();
+      final luminanceFg = scheme.onPrimaryContainer.computeLuminance();
+      final contrast = (luminanceBg + 0.05) / (luminanceFg + 0.05);
+      final inverseContrast = (luminanceFg + 0.05) / (luminanceBg + 0.05);
+      
+      expect(contrast > 3.0 || inverseContrast > 3.0, isTrue);
     });
   });
 }

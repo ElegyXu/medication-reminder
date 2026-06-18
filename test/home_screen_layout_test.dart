@@ -41,7 +41,7 @@ void main() {
       expect(appBar.pinned, isTrue);
       expect(appBar.floating, isFalse);
       expect(appBar.expandedHeight, 180);
-      expect(appBar.backgroundColor, AppTheme.surfaceColor);
+      expect(appBar.backgroundColor, AppTheme.lightTheme.colorScheme.surface);
 
       final sliverPadding = tester.widget<SliverPadding>(find.byType(SliverPadding));
       expect(sliverPadding.padding, const EdgeInsets.all(16));
@@ -72,8 +72,8 @@ void main() {
       final gradient = (container.decoration as BoxDecoration).gradient as LinearGradient;
       // MD3: 2-stop gradient surface → primaryContainer
       expect(gradient.colors.length, 2);
-      expect(gradient.colors[0], AppTheme.surfaceColor);
-      expect(gradient.colors[1], AppTheme.primaryContainerColor);
+      expect(gradient.colors[0], AppTheme.lightTheme.colorScheme.surface);
+      expect(gradient.colors[1], AppTheme.lightTheme.colorScheme.primaryContainer);
     });
   });
 }

@@ -284,8 +284,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         final taken = provider.todayStats['taken'] ?? 0;
         final ratio = total > 0 ? taken / total : 0.0;
         return Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          margin: EdgeInsets.zero,
+          clipBehavior: Clip.antiAlias,
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -1224,7 +1224,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         onPressed: onPressed,
         icon: Icon(icon, size: 18),
         label: Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-        elevation: 2,
+        elevation: 0,
         materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       ),

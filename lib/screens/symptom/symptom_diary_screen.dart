@@ -55,7 +55,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
                 Slider(
                   value: severity,
                   min: 1, max: 5, divisions: 4,
-                  activeColor: AppTheme.primaryColor,
+                  activeColor: Theme.of(context).colorScheme.primary,
                   label: '${severity.toInt()}级',
                   onChanged: (v) => setDialogState(() => severity = v),
                 ),

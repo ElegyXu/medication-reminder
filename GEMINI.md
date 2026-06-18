@@ -82,7 +82,7 @@ flutter build apk --release
 2. **Pre-Build Phase:**
    - Implement and refine the agreed-upon test cases.
    - Run the entire test suite and ensure a 100% pass rate.
-   - Commit changes to the Git repository.
+   - Commit changes to the local Git repository and push them to the remote repository (`git push`).
 3. **Packaging Rules:**
    - **Version Increment:** Increment the version number by `+0.0.1` for every code update (update `pubspec.yaml`).
    - **Naming Convention:** `{ProjectName}_v{Version}.apk` (e.g., `家庭用药管家_v1.0.41.apk`).
