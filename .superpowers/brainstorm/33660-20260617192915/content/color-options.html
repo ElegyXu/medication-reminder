@@ -1,0 +1,119 @@
+<h2>配色方向探索 — 老年用药提醒 App</h2>
+<p class="subtitle">目标：温暖、清晰、高可读性。点击选择你喜欢的方案。</p>
+
+<div class="cards">
+  <div class="card" data-choice="warm-amber" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;gap:12px;padding:16px;border-radius:8px;background:#FFF8F0">
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1">
+          <div style="background:#C24600;color:white;padding:10px 14px;border-radius:12px;font-weight:bold;font-size:15px">今日用药提醒</div>
+          <div style="display:flex;gap:8px">
+            <div style="background:#FFD4B8;padding:8px 12px;border-radius:8px;font-size:13px;color:#5C2800;flex:1">阿莫西林<br>早饭后 8:00</div>
+            <div style="background:#FFD4B8;padding:8px 12px;border-radius:8px;font-size:13px;color:#5C2800;flex:1">降压药<br>早饭后 8:00</div>
+          </div>
+          <div style="background:#FFF0E5;padding:10px;border-radius:8px;font-size:12px;color:#7A3C00;text-align:center">下午 14:00 下次提醒 →</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+        <div style="width:16px;height:16px;border-radius:50%;background:#C24600" title="primary"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:#FFD4B8" title="secondaryContainer"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:#5C2800" title="onSecondaryContainer"></div>
+        <span style="font-size:11px;color:#888">#C24600 暖橙</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 A · 暖橙琥珀</h3>
+      <p>seedColor: #C24600 — 沉稳暖橙，类似琥珀色调。高对比度，适合老年人阅读。温暖但不刺眼，医疗感适中。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="soft-teal" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;gap:12px;padding:16px;border-radius:8px;background:#F2F8F6">
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1">
+          <div style="background:#006B5E;color:white;padding:10px 14px;border-radius:12px;font-weight:bold;font-size:15px">今日用药提醒</div>
+          <div style="display:flex;gap:8px">
+            <div style="background:#B3E5DA;padding:8px 12px;border-radius:8px;font-size:13px;color:#00352D;flex:1">阿莫西林<br>早饭后 8:00</div>
+            <div style="background:#B3E5DA;padding:8px 12px;border-radius:8px;font-size:13px;color:#00352D;flex:1">降压药<br>早饭后 8:00</div>
+          </div>
+          <div style="background:#E0F2EF;padding:10px;border-radius:8px;font-size:12px;color:#004D42;text-align:center">下午 14:00 下次提醒 →</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+        <div style="width:16px;height:16px;border-radius:50%;background:#006B5E" title="primary"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:#B3E5DA" title="secondaryContainer"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:#00352D" title="onSecondaryContainer"></div>
+        <span style="font-size:11px;color:#888">#006B5E 青绿</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 B · 柔和青绿</h3>
+      <p>seedColor: #006B5E — 深青绿色，医疗健康行业经典色。给人安全、舒缓感，对眼睛友好，适合长时间查看。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="deep-blue" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;gap:12px;padding:16px;border-radius:8px;background:#F5F7FA">
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1">
+          <div style="background:#1A4B84;color:white;padding:10px 14px;border-radius:12px;font-weight:bold;font-size:15px">今日用药提醒</div>
+          <div style="display:flex;gap:8px">
+            <div style="background:#D0E2F5;padding:8px 12px;border-radius:8px;font-size:13px;color:#0D2847;flex:1">阿莫西林<br>早饭后 8:00</div>
+            <div style="background:#D0E2F5;padding:8px 12px;border-radius:8px;font-size:13px;color:#0D2847;flex:1">降压药<br>早饭后 8:00</div>
+          </div>
+          <div style="background:#E8F0F8;padding:10px;border-radius:8px;font-size:12px;color:#153A63;text-align:center">下午 14:00 下次提醒 →</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+        <div style="width:16px;height:16px;border-radius:50%;background:#1A4B84" title="primary"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:#D0E2F5" title="secondaryContainer"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:#0D2847" title="onSecondaryContainer"></div>
+        <span style="font-size:11px;color:#888">#1A4B84 深蓝</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 C · 深蓝信赖</h3>
+      <p>seedColor: #1A4B84 — 稳重深蓝，传达专业与信赖感。冷色调平衡，高对比度确保文字清晰，适合严肃用药场景。</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="warm-plum" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="display:flex;gap:12px;padding:16px;border-radius:8px;background:#FAF5F8">
+        <div style="display:flex;flex-direction:column;gap:8px;flex:1">
+          <div style="background:#7A3B5C;color:white;padding:10px 14px;border-radius:12px;font-weight:bold;font-size:15px">今日用药提醒</div>
+          <div style="display:flex;gap:8px">
+            <div style="background:#F0D5E2;padding:8px 12px;border-radius:8px;font-size:13px;color:#3D1C2D;flex:1">阿莫西林<br>早饭后 8:00</div>
+            <div style="background:#F0D5E2;padding:8px 12px;border-radius:8px;font-size:13px;color:#3D1C2D;flex:1">降压药<br>早饭后 8:00</div>
+          </div>
+          <div style="background:#F5E8EF;padding:10px;border-radius:8px;font-size:12px;color:#5A2942;text-align:center">下午 14:00 下次提醒 →</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:8px;align-items:center">
+        <div style="width:16px;height:16px;border-radius:50%;background:#7A3B5C" title="primary"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:#F0D5E2" title="secondaryContainer"></div>
+        <div style="width:16px;height:16px;border-radius:50%;background:#3D1C2D" title="onSecondaryContainer"></div>
+        <span style="font-size:11px;color:#888">#7A3B5C 暖梅</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>方案 D · 暖梅紫红</h3>
+      <p>seedColor: #7A3B5C — 低饱和暖梅色调，比当前红色柔和很多。保留温暖感但更优雅，对老年人眼睛更友好。</p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>当前配色对比</h3>
+  <div style="display:flex;gap:12px;padding:16px;border-radius:8px;background:#FAFAFA;align-items:center">
+    <span style="font-weight:bold;color:#666;flex-shrink:0">现用红色系</span>
+    <div style="display:flex;gap:6px">
+      <div style="width:20px;height:20px;border-radius:50%;background:#780018" title="#780018"></div>
+      <div style="width:20px;height:20px;border-radius:50%;background:#AA0033" title="#AA0033"></div>
+      <div style="width:20px;height:20px;border-radius:50%;background:#DD0022" title="#DD0022"></div>
+      <div style="width:20px;height:20px;border-radius:50%;background:#CC0044" title="#CC0044"></div>
+      <div style="width:20px;height:20px;border-radius:50%;background:#FA8095" title="#FA8095"></div>
+    </div>
+    <span style="font-size:12px;color:#999">seedColor #DD0022（用户认为"太丑"）</span>
+  </div>
+</div>

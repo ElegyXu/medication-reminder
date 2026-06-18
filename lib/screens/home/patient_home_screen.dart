@@ -192,17 +192,34 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             padding: const EdgeInsets.fromLTRB(16, 16, 16, 16),
             sliver: SliverList(
               delegate: SliverChildBuilderDelegate(
-                (context, index) => switch (index) {
-                  0 => _buildProgressRow(cs, tt),
-                  1 => const SizedBox(height: 16),
-                  2 => _buildWeekStrip(cs, tt),
-                  3 => const SizedBox(height: 16),
-                  4 => _buildStreakFooter(cs, tt),
-                  5 => const SizedBox(height: 16),
-                  6 => _buildPeriodSections(cs, tt),
-                  _ => null,
+                (context, index) {
+                  final medicineProvider = context.watch<MedicineProvider>();
+                  final lowStockMedicines = medicineProvider.activeMedicines.where(
+                    (m) => m.alertThreshold > 0 && m.currentStock <= m.alertThreshold
+                  ).toList();
+
+                  final listItems = <Widget>[
+                    _buildProgressRow(cs, tt),
+                    const SizedBox(height: 16),
+                  ];
+                  
+                  if (lowStockMedicines.isNotEmpty) {
+                    listItems.add(_buildLowStockAlert(lowStockMedicines, cs, tt));
+                    listItems.add(const SizedBox(height: 16));
+                  }
+                  
+                  listItems.addAll([
+                    _buildWeekStrip(cs, tt),
+                    const SizedBox(height: 16),
+                    _buildStreakFooter(cs, tt),
+                    const SizedBox(height: 16),
+                    _buildPeriodSections(cs, tt),
+                  ]);
+                  
+                  if (index < listItems.length) return listItems[index];
+                  return null;
                 },
-                childCount: 7,
+                childCount: context.watch<MedicineProvider>().activeMedicines.where((m) => m.alertThreshold > 0 && m.currentStock <= m.alertThreshold).isNotEmpty ? 9 : 7,
               ),
             ),
           ),
@@ -1267,6 +1284,29 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildLowStockAlert(List<Medicine> meds, ColorScheme cs, TextTheme tt) {
+    final names = meds.map((m) => m.name).join('、');
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: cs.errorContainer,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.warning_amber_rounded, color: cs.onErrorContainer),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              '库存预警: $names 库存不足，请及时补充。',
+              style: tt.bodyMedium?.copyWith(color: cs.onErrorContainer),
+            ),
+          ),
+        ],
       ),
     );
   }

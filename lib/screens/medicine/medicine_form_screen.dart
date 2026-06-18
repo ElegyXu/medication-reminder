@@ -16,6 +16,8 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
   late TextEditingController _nameController;
   late TextEditingController _specController;
   late TextEditingController _notesController;
+  late TextEditingController _stockController;
+  late TextEditingController _thresholdController;
   String _dosageForm = '片剂';
   int _colorValue = 0xFFC41E3A;
 
@@ -34,6 +36,8 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
     _nameController = TextEditingController(text: m?.name ?? '');
     _specController = TextEditingController(text: m?.specification ?? '');
     _notesController = TextEditingController(text: m?.notes ?? '');
+    _stockController = TextEditingController(text: m?.currentStock.toString() ?? '0.0');
+    _thresholdController = TextEditingController(text: m?.alertThreshold.toString() ?? '0.0');
     if (m != null) {
       _dosageForm = m.dosageForm;
       _colorValue = m.colorValue;
@@ -45,6 +49,8 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
     _nameController.dispose();
     _specController.dispose();
     _notesController.dispose();
+    _stockController.dispose();
+    _thresholdController.dispose();
     super.dispose();
   }
 
@@ -59,6 +65,8 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
         specification: _specController.text.trim(),
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
         colorValue: _colorValue,
+        currentStock: double.tryParse(_stockController.text.trim()) ?? 0.0,
+        alertThreshold: double.tryParse(_thresholdController.text.trim()) ?? 0.0,
         updatedAt: DateTime.now(),
       );
       await provider.updateMedicineData(updated);
@@ -69,6 +77,8 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
         specification: _specController.text.trim(),
         notes: _notesController.text.trim().isEmpty ? null : _notesController.text.trim(),
         colorValue: _colorValue,
+        currentStock: double.tryParse(_stockController.text.trim()) ?? 0.0,
+        alertThreshold: double.tryParse(_thresholdController.text.trim()) ?? 0.0,
       );
     }
 
@@ -109,6 +119,26 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
               controller: _notesController,
               decoration: const InputDecoration(labelText: '备注', hintText: '可选'),
               maxLines: 2,
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _stockController,
+                    decoration: const InputDecoration(labelText: '当前库存', hintText: '如：30'),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: TextFormField(
+                    controller: _thresholdController,
+                    decoration: const InputDecoration(labelText: '低库存预警', hintText: '如：5'),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Text('图标颜色', style: Theme.of(context).textTheme.titleSmall),

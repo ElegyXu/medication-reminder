@@ -34,6 +34,8 @@ class MedicineProvider extends ChangeNotifier {
     required String specification,
     String? notes,
     int colorValue = 0xFFC41E3A,
+    double currentStock = 0.0,
+    double alertThreshold = 0.0,
   }) async {
     final now = DateTime.now();
     final medicine = Medicine(
@@ -43,6 +45,8 @@ class MedicineProvider extends ChangeNotifier {
       specification: specification,
       notes: notes,
       colorValue: colorValue,
+      currentStock: currentStock,
+      alertThreshold: alertThreshold,
       isActive: true,
       createdAt: now,
       updatedAt: now,

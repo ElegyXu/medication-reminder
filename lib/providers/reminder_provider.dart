@@ -138,7 +138,29 @@ class ReminderProvider extends ChangeNotifier {
       takenAt: DateTime.now(),
     );
     await _db.updateReminder(updated);
+    await _deductStock(reminder.scheduleId, reminder.dosage);
     await loadTodayReminders();
+  }
+
+  Future<void> _deductStock(String scheduleId, String dosageStr) async {
+    final schedule = await _db.getSchedule(scheduleId);
+    if (schedule != null) {
+      final medicine = await _db.getMedicine(schedule.medicineId);
+      if (medicine != null) {
+        final match = RegExp(r'[\d.]+').firstMatch(dosageStr);
+        if (match != null) {
+          final consumed = double.tryParse(match.group(0)!) ?? 0.0;
+          if (consumed > 0) {
+            double newStock = medicine.currentStock - consumed;
+            if (newStock < 0) newStock = 0;
+            await _db.updateMedicine(medicine.copyWith(
+              currentStock: newStock,
+              updatedAt: DateTime.now(),
+            ));
+          }
+        }
+      }
+    }
   }
 
   /// 跳过服药
@@ -206,6 +228,7 @@ class ReminderProvider extends ChangeNotifier {
       createdAt: now,
     );
     await _db.insertReminder(reminder);
+    await _deductStock(schedule.id, schedule.dosage);
     await loadTodayReminders();
     return true;
   }

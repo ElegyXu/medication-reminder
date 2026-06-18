@@ -27,9 +27,17 @@ class DatabaseHelper {
     final path = join(dbPath, 'medication_reminder.db');
     return await openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
+  }
+
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE medicines ADD COLUMN current_stock REAL DEFAULT 0.0');
+      await db.execute('ALTER TABLE medicines ADD COLUMN alert_threshold REAL DEFAULT 0.0');
+    }
   }
 
   Future<void> _onCreate(Database db, int version) async {
@@ -41,6 +49,8 @@ class DatabaseHelper {
         specification TEXT NOT NULL,
         notes TEXT,
         color_value INTEGER DEFAULT 4284513850,
+        current_stock REAL DEFAULT 0.0,
+        alert_threshold REAL DEFAULT 0.0,
         is_active INTEGER DEFAULT 1,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
@@ -180,6 +190,13 @@ class DatabaseHelper {
       orderBy: 'updated_at DESC',
     );
     return maps.map((m) => MedicationSchedule.fromMap(m)).toList();
+  }
+
+  Future<MedicationSchedule?> getSchedule(String id) async {
+    final db = await database;
+    final maps = await db.query('schedules', where: 'id = ?', whereArgs: [id]);
+    if (maps.isEmpty) return null;
+    return MedicationSchedule.fromMap(maps.first);
   }
 
   Future<void> insertSchedule(MedicationSchedule schedule) async {

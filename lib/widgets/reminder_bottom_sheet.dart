@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../models/reminder.dart';
 import '../providers/reminder_provider.dart';
+import '../providers/medicine_provider.dart';
 
 class ReminderBottomSheet extends StatelessWidget {
   final Reminder reminder;
@@ -84,6 +86,9 @@ class ReminderBottomSheet extends StatelessWidget {
               onPressed: () async {
                 Navigator.pop(context);
                 await provider.takeMedicine(reminder);
+                if (context.mounted) {
+                  context.read<MedicineProvider>().loadMedicines();
+                }
               },
               icon: const Icon(Icons.check, size: 22),
               label: const Text('确认用药', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
