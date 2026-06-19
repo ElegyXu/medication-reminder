@@ -222,10 +222,10 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                 isExpanded: true,
                 alignment: AlignmentDirectional.centerStart,
                 decoration: InputDecoration(
-                  label: const Text.rich(
+                  label: Text.rich(
                     TextSpan(
                       text: '关联药品',
-                      children: [TextSpan(text: ' *', style: TextStyle(color: Colors.red))],
+                      children: [TextSpan(text: ' *', style: TextStyle(color: Theme.of(context).colorScheme.error))],
                     ),
                   ),
                   filled: true,
@@ -406,7 +406,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                           ),
                           if (_timePoints.length > 1)
                             IconButton(
-                              icon: const Icon(Icons.remove_circle_outline, color: Colors.red, size: 22),
+                              icon: Icon(Icons.remove_circle_outline, color: Theme.of(context).colorScheme.error, size: 22),
                               padding: EdgeInsets.zero,
                               constraints: const BoxConstraints(),
                               onPressed: () => setState(() => _timePoints.removeAt(index)),
@@ -532,7 +532,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('开始日期', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            Text('开始日期', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             Text(
                               '${_startDate.year}年${_startDate.month}月${_startDate.day}日',
                               style: const TextStyle(fontSize: 14),
@@ -554,7 +554,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('结束日期', style: TextStyle(fontSize: 12, color: Colors.grey)),
+                            Text('结束日期', style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurfaceVariant)),
                             Text(
                               _endDate != null
                                   ? '${_endDate!.year}年${_endDate!.month}月${_endDate!.day}日'
@@ -566,7 +566,7 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                         if (_endDate != null)
                           GestureDetector(
                             onTap: () => setState(() => _endDate = null),
-                            child: const Icon(Icons.clear, size: 16, color: Colors.grey),
+                            child: Icon(Icons.clear, size: 16, color: Theme.of(context).colorScheme.onSurfaceVariant),
                           ),
                       ],
                     ),
@@ -724,7 +724,7 @@ class _TimePickerSheetState extends State<_TimePickerSheet> {
               fontWeight: FontWeight.w600,
               color: i == current
                   ? Theme.of(ctx).colorScheme.primary
-                  : Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.5),
+                  : Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.62),
             ),
           ),
         ),

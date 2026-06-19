@@ -59,7 +59,7 @@ class AsyncContentWrapper extends StatelessWidget {
             const SizedBox(height: 12),
             Text(emptyTitle, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16)),
             const SizedBox(height: 4),
-            Text(emptySubtitle, style: TextStyle(color: cs.onSurfaceVariant.withAlpha(210), fontSize: 13)),
+            Text(emptySubtitle, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
           ],
         ),
       );

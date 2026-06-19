@@ -59,7 +59,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.schedule, size: 64, color: Colors.grey.shade300),
+                Icon(Icons.schedule, size: 64, color: cs.outline),
                 const SizedBox(height: 12),
                 Text('暂无用药计划', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16)),
                 const SizedBox(height: 4),
@@ -131,7 +131,7 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
             color: Theme.of(context).colorScheme.primary,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(Icons.list_alt, color: Colors.white, size: 22),
+          child: Icon(Icons.list_alt, color: Theme.of(context).colorScheme.onPrimary, size: 22),
         ),
       ],
     );
@@ -287,9 +287,9 @@ class _ScheduleListScreenState extends State<ScheduleListScreen> {
                   },
                   itemBuilder: (_) => [
                     const PopupMenuItem(value: 'edit', child: Text('编辑')),
-                    const PopupMenuItem(
+                    PopupMenuItem(
                       value: 'delete',
-                      child: Text('删除', style: TextStyle(color: Colors.red)),
+                      child: Text('删除', style: TextStyle(color: cs.error)),
                     ),
                   ],
                 ),

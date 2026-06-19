@@ -569,7 +569,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   Text(reminder.medicineName,
                       style: tt.bodyLarge?.copyWith(
                         decoration: isTaken ? TextDecoration.lineThrough : null,
-                        color: isTaken ? cs.onSurface.withAlpha(128) : null,
+                        color: isTaken ? cs.onSurfaceVariant : null,
                       )),
                   const SizedBox(height: 2),
                   Row(

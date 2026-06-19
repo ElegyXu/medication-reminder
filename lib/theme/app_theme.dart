@@ -8,6 +8,11 @@ class AppTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: seedColor,
       brightness: Brightness.light,
+    ).copyWith(
+      tertiary: const Color(0xFF7A5900),
+      onTertiary: const Color(0xFFFFFFFF),
+      tertiaryContainer: const Color(0xFFFFDF9B),
+      onTertiaryContainer: const Color(0xFF271900),
     );
 
     // ── Text Theme ──
