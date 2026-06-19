@@ -27,6 +27,8 @@ class AsyncContentWrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     if (isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
@@ -38,7 +40,7 @@ class AsyncContentWrapper extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(errorMessage!, style: const TextStyle(color: Colors.red, fontSize: 14)),
+              Text(errorMessage!, style: TextStyle(color: cs.error, fontSize: 14)),
               const SizedBox(height: 12),
               if (onRetry != null)
                 OutlinedButton(onPressed: onRetry, child: const Text('重试')),
@@ -55,9 +57,9 @@ class AsyncContentWrapper extends StatelessWidget {
           children: [
             Text(emptyIconText, style: const TextStyle(fontSize: 48)),
             const SizedBox(height: 12),
-            Text(emptyTitle, style: TextStyle(color: Colors.grey.shade500, fontSize: 16)),
+            Text(emptyTitle, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16)),
             const SizedBox(height: 4),
-            Text(emptySubtitle, style: TextStyle(color: Colors.grey.shade400, fontSize: 13)),
+            Text(emptySubtitle, style: TextStyle(color: cs.onSurfaceVariant.withAlpha(210), fontSize: 13)),
           ],
         ),
       );

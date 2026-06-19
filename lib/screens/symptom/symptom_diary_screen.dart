@@ -117,31 +117,32 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
 
   Widget _buildSeverityChip(int level, double current, Function setState) {
     final isSelected = current.toInt() == level;
+    final cs = Theme.of(context).colorScheme;
     return GestureDetector(
       onTap: () => setState(() => current = level.toDouble()),
       child: Chip(
         avatar: Icon(
           Icons.star,
           size: 18,
-          color: isSelected ? _severityColor(level) : Colors.grey,
+          color: isSelected ? _severityColor(level, cs) : cs.onSurfaceVariant,
         ),
         label: Text('$level', style: TextStyle(
-          color: isSelected ? _severityColor(level) : Colors.grey,
+          color: isSelected ? _severityColor(level, cs) : cs.onSurfaceVariant,
           fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         )),
-        backgroundColor: isSelected ? _severityColor(level).withAlpha(20) : null,
+        backgroundColor: isSelected ? _severityColor(level, cs).withAlpha(20) : null,
       ),
     );
   }
 
-  Color _severityColor(int level) {
+  Color _severityColor(int level, ColorScheme cs) {
     switch (level) {
-      case 1: return Colors.green;
-      case 2: return Colors.lightGreen;
-      case 3: return Colors.orange;
-      case 4: return Colors.deepOrange;
-      case 5: return Colors.red;
-      default: return Colors.grey;
+      case 1: return cs.tertiary;
+      case 2: return Color.alphaBlend(cs.primary.withAlpha(128), cs.tertiary);
+      case 3: return cs.primary;
+      case 4: return Color.alphaBlend(cs.error.withAlpha(160), cs.primary);
+      case 5: return cs.error;
+      default: return cs.onSurfaceVariant;
     }
   }
 
@@ -166,7 +167,7 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.edit_note, size: 64, color: Colors.grey.shade300),
+                  Icon(Icons.edit_note, size: 64, color: cs.outline),
                   const SizedBox(height: 12),
                   Text('暂无记录', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16)),
                 ],
@@ -185,11 +186,11 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
                   margin: const EdgeInsets.only(bottom: 8),
                   child: ListTile(
                     leading: CircleAvatar(
-                      backgroundColor: _severityColor(symptom.severity).withAlpha(30),
+                      backgroundColor: _severityColor(symptom.severity, cs).withAlpha(30),
                       child: Text(
                         '${symptom.severity}',
                         style: TextStyle(
-                          color: _severityColor(symptom.severity),
+                          color: _severityColor(symptom.severity, cs),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -201,13 +202,13 @@ class _SymptomDiaryScreenState extends State<SymptomDiaryScreen> {
                         Text('${symptom.severityLabel} · ${DateFormat('MM-dd HH:mm').format(symptom.createdAt)}'),
                         if (symptom.relatedMedicineName != null)
                           Text('关联: ${symptom.relatedMedicineName}',
-                              style: TextStyle(fontSize: 12, color: Colors.grey.shade500)),
+                              style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
                         if (symptom.notes != null && symptom.notes!.isNotEmpty)
-                          Text(symptom.notes!, style: TextStyle(fontSize: 12, color: Colors.grey.shade600)),
+                          Text(symptom.notes!, style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant)),
                       ],
                     ),
                     trailing: IconButton(
-                      icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                      icon: Icon(Icons.delete_outline, color: Theme.of(context).colorScheme.error, size: 20),
                       onPressed: () => provider.removeSymptom(symptom.id),
                     ),
                   ),

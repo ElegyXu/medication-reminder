@@ -19,12 +19,16 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
   late TextEditingController _stockController;
   late TextEditingController _thresholdController;
   String _dosageForm = '片剂';
-  int _colorValue = 0xFFC41E3A;
+  int _colorValue = 0xFFA73909;
 
   final List<String> _dosageForms = ['片剂', '胶囊', '口服液', '颗粒', '丸剂', '注射剂', '外用', '其他'];
-  final List<Color> _colors = [
-    const Color(0xFFC41E3A), const Color(0xFF1976D2), const Color(0xFF388E3C),
-    const Color(0xFFF57C00), const Color(0xFF7B1FA2), const Color(0xFF00838F),
+  final List<Color> _medicineColors = [
+    const Color(0xFFA73909),  // primary warm red-orange
+    const Color(0xFF775849),  // secondary warm brown
+    const Color(0xFF6A5D2D),  // tertiary warm olive
+    const Color(0xFFBA1A1A),  // error red
+    const Color(0xFF9C4235),  // warm brick (介于 primary 和 error)
+    const Color(0xFF5D4037),  // warm dark brown
   ];
 
   bool get isEditing => widget.medicine != null;
@@ -145,7 +149,7 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
             const SizedBox(height: 8),
             Wrap(
               spacing: 10,
-              children: _colors.map((c) => GestureDetector(
+              children: _medicineColors.map((c) => GestureDetector(
                 onTap: () => setState(() => _colorValue = c.toARGB32()),
                 child: Container(
                   width: 36, height: 36,
@@ -153,7 +157,7 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
                     color: c,
                     shape: BoxShape.circle,
                     border: _colorValue == c.toARGB32()
-                        ? Border.all(color: Colors.white, width: 3)
+                        ? Border.all(color: Theme.of(context).colorScheme.surface, width: 3)
                         : null,
                     boxShadow: _colorValue == c.toARGB32()
                         ? [BoxShadow(color: c.withAlpha(100), blurRadius: 8, spreadRadius: 1)]

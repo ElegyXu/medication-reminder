@@ -641,7 +641,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         backgroundColor: cs.primary.withAlpha(20),
         child: Icon(icon, color: cs.primary, size: 22),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
+      title: Text(title, style: TextStyle(fontWeight: FontWeight.w500, color: cs.onSurface)),
       subtitle: Text(subtitle, style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13)),
       trailing: Icon(Icons.chevron_right, color: cs.outline),
       onTap: onTap,
@@ -752,8 +752,8 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               children: [
                 Icon(Icons.bar_chart, size: 20, color: cs.tertiary),
                 const SizedBox(width: 8),
-                const Text('数据统计总览',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                Text('数据统计总览',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: cs.onSurface)),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -1058,7 +1058,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     backgroundColor: Color(medicine.colorValue).withAlpha(30),
                     child: Icon(Icons.medication, color: Color(medicine.colorValue), size: 22),
                   ),
-                  title: Text(medicine.name, style: tt.bodyLarge),
+                  title: Text(medicine.name, style: tt.bodyLarge?.copyWith(color: cs.onSurface)),
                   subtitle: Text('${medicine.specification}  ·  ${medicine.dosageForm}'),
                   trailing: Switch(
                     value: medicine.isActive,
