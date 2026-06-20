@@ -127,6 +127,23 @@ void main() {
       expect(scheme.surfaceContainerHighest.value, isNot(equals(0)));
     });
 
+    test('TC-FUSION-09b: surfaceContainer 中性化微暖灰阶精确值', () {
+      expect(scheme.surfaceContainerLowest, const Color(0xFFF8F6F5));
+      expect(scheme.surfaceContainerLow, const Color(0xFFF3EFEE));
+      expect(scheme.surfaceContainer, const Color(0xFFEDE8E7));
+      expect(scheme.surfaceContainerHigh, const Color(0xFFE7E1E0));
+      expect(scheme.surfaceContainerHighest, const Color(0xFFE1DBDA));
+    });
+
+    test('TC-FUSION-09c: secondaryContainer 柔化琥珀精确值', () {
+      expect(scheme.secondaryContainer, const Color(0xFFF0D060));
+    });
+
+    test('TC-FUSION-09d: 文字对比度提升 — surfaceVariant / onSurfaceVariant 精确值', () {
+      expect(scheme.surfaceVariant, const Color(0xFFF0ECEB));
+      expect(scheme.onSurfaceVariant, const Color(0xFF3D2B2A));
+    });
+
     test('TC-FUSION-10: outline = 0xFF857372 且 outlineVariant = 0xFFD7C2C1', () {
       expect(scheme.outline, const Color(0xFF857372));
       expect(scheme.outlineVariant, const Color(0xFFD7C2C1));

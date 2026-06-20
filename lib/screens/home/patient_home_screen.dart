@@ -7,6 +7,7 @@ import '../../providers/reminder_provider.dart';
 import '../../models/reminder.dart';
 import '../../models/medicine.dart';
 import '../../widgets/reminder_bottom_sheet.dart';
+import '../../theme/app_theme.dart';
 import '../../utils/lunar_calendar.dart';
 import '../medicine/medicine_form_screen.dart';
 import '../schedule/schedule_list_screen.dart';
@@ -79,10 +80,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
 
   Color _getStatusColor(ReminderStatus status, ColorScheme cs) {
     switch (status) {
-      case ReminderStatus.taken: return cs.primary;
-      case ReminderStatus.skipped: return cs.tertiary;
-      case ReminderStatus.pending: return cs.primary;
-      case ReminderStatus.missed: return cs.error;
+      case ReminderStatus.taken: return AppTheme.medTaken;
+      case ReminderStatus.skipped: return AppTheme.medTaken;
+      case ReminderStatus.pending: return AppTheme.medPending;
+      case ReminderStatus.missed: return AppTheme.medMissed;
     }
   }
 

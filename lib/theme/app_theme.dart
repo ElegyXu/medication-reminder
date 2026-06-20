@@ -18,7 +18,7 @@ class AppTheme {
     // === Secondary 金 ===
     secondary:              const Color(0xFF6D5E00),
     onSecondary:            const Color(0xFFFFFFFF),
-    secondaryContainer:     const Color(0xFFFAE287),
+    secondaryContainer:     const Color(0xFFF0D060),
     onSecondaryContainer:   const Color(0xFF221B00),
     // === Tertiary 绿 ===
     tertiary:               const Color(0xFF1B6D1B),
@@ -33,13 +33,13 @@ class AppTheme {
     // === Surface + 色阶 ===
     surface:                const Color(0xFFFFFFFF),
     onSurface:              const Color(0xFF201A1A),
-    surfaceVariant:         const Color(0xFFF5F0F0),
-    onSurfaceVariant:       const Color(0xFF534342),
-    surfaceContainerLowest:  const Color(0xFFFFF5F3),
-    surfaceContainerLow:     const Color(0xFFFDEAE8),
-    surfaceContainer:        const Color(0xFFF7E3E2),
-    surfaceContainerHigh:    const Color(0xFFF1DDDB),
-    surfaceContainerHighest: const Color(0xFFECD7D5),
+    surfaceVariant:         const Color(0xFFF0ECEB),
+    onSurfaceVariant:       const Color(0xFF3D2B2A),
+    surfaceContainerLowest:  const Color(0xFFF8F6F5),
+    surfaceContainerLow:     const Color(0xFFF3EFEE),
+    surfaceContainer:        const Color(0xFFEDE8E7),
+    surfaceContainerHigh:    const Color(0xFFE7E1E0),
+    surfaceContainerHighest: const Color(0xFFE1DBDA),
     surfaceTint:            const Color(0xFFA31520),
     // === Background ===
     background:             const Color(0xFFFFF8F7),

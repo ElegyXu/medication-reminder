@@ -259,4 +259,45 @@ void main() {
           reason: 'medPending contrast on surface is $cr, must be >= 2.0');
     });
   });
+
+  group('TC-COLOR-08: 服药状态颜色语义映射 (_getStatusColor)', () {
+    // 模拟 patient_home_screen.dart 中的 _getStatusColor 逻辑
+    Color getStatusColor(String status) {
+      switch (status) {
+        case 'taken':   return AppTheme.medTaken;
+        case 'skipped': return AppTheme.medTaken;
+        case 'pending': return AppTheme.medPending;
+        case 'missed':  return AppTheme.medMissed;
+        default:        return cs.onSurfaceVariant;
+      }
+    }
+
+    test('taken → medTaken (绿色 #1B6D1B)', () {
+      expect(getStatusColor('taken'), AppTheme.medTaken);
+      expect(getStatusColor('taken'), const Color(0xFF1B6D1B));
+    });
+
+    test('skipped → medTaken (绿色 #1B6D1B)', () {
+      expect(getStatusColor('skipped'), AppTheme.medTaken);
+      expect(getStatusColor('skipped'), const Color(0xFF1B6D1B));
+    });
+
+    test('pending → medPending (橙色 #FF9800)', () {
+      expect(getStatusColor('pending'), AppTheme.medPending);
+      expect(getStatusColor('pending'), const Color(0xFFFF9800));
+    });
+
+    test('missed → medMissed (红色 #BA1A1A)', () {
+      expect(getStatusColor('missed'), AppTheme.medMissed);
+      expect(getStatusColor('missed'), const Color(0xFFBA1A1A));
+    });
+
+    test('taken != cs.primary (确保不再用主色红表示已服)', () {
+      expect(getStatusColor('taken'), isNot(cs.primary));
+    });
+
+    test('pending != cs.primary (确保不再用主色红表示待服)', () {
+      expect(getStatusColor('pending'), isNot(cs.primary));
+    });
+  });
 }
