@@ -27,7 +27,7 @@ class DatabaseHelper {
     final path = join(dbPath, 'medication_reminder.db');
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -37,6 +37,11 @@ class DatabaseHelper {
     if (oldVersion < 2) {
       await db.execute('ALTER TABLE medicines ADD COLUMN current_stock REAL DEFAULT 0.0');
       await db.execute('ALTER TABLE medicines ADD COLUMN alert_threshold REAL DEFAULT 0.0');
+    }
+    if (oldVersion < 3) {
+      await db.execute(
+        'UPDATE medicines SET color_value = 4291176488 WHERE color_value = 4291042874',
+      );
     }
   }
 

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'app_theme.dart';
 
-void main() {
+/// Debug utility: prints ColorScheme tokens to console.
+/// Usage: call printColorScheme() from within an existing main() or debug context.
+void printColorScheme() {
   final theme = AppTheme.lightTheme;
   final cs = theme.colorScheme;
 

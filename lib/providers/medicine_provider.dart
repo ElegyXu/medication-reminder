@@ -33,7 +33,7 @@ class MedicineProvider extends ChangeNotifier {
     required String dosageForm,
     required String specification,
     String? notes,
-    int colorValue = 0xFFC41E3A,
+    int colorValue = 0xFFC62828,
     double currentStock = 0.0,
     double alertThreshold = 0.0,
   }) async {

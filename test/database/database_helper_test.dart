@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:path/path.dart';
 import 'package:medication_reminder/database/database_helper.dart';
 import 'package:medication_reminder/models/medicine.dart';
 import 'package:medication_reminder/models/schedule.dart';
@@ -31,7 +32,7 @@ void main() {
   Medicine makeMed({String id = 'm1', String name = '阿莫西林', bool isActive = true}) {
     return Medicine(
       id: id, name: name, dosageForm: '片剂', specification: '500mg',
-      notes: '饭后服用', colorValue: 0xFFC41E3A, isActive: isActive,
+      notes: '饭后服用', colorValue: 0xFFC62828, isActive: isActive,
       createdAt: now, updatedAt: now,
     );
   }
@@ -485,6 +486,78 @@ void main() {
       ));
       final m = await db.getMedicine('m1');
       expect(m!.notes, isNull);
+    });
+
+    // TC-FIX-02: 验证数据库 migration 将旧 color_value 迁移为新值
+    test('TC-FIX-02: v2→v3 迁移将旧 color_value 0xFFC41E3A 更新为 0xFFC62828', () async {
+      final dbPath = await databaseFactoryFfi.getDatabasesPath();
+      final path = join(dbPath, 'test_migration_fix.db');
+
+      // Step 1: Create database at version 2, insert medicine with old color
+      final dbV2 = await databaseFactoryFfi.openDatabase(
+        path,
+        options: OpenDatabaseOptions(
+          version: 2,
+          onCreate: (db, version) async {
+            await db.execute('''
+              CREATE TABLE medicines (
+                id TEXT PRIMARY KEY,
+                name TEXT NOT NULL,
+                dosage_form TEXT NOT NULL,
+                specification TEXT NOT NULL,
+                notes TEXT,
+                color_value INTEGER DEFAULT 4291042874,
+                current_stock REAL DEFAULT 0.0,
+                alert_threshold REAL DEFAULT 0.0,
+                is_active INTEGER DEFAULT 1,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL
+              )
+            ''');
+          },
+        ),
+      );
+      await dbV2.insert('medicines', {
+        'id': 'test-mig',
+        'name': '旧颜色药品',
+        'dosage_form': '片剂',
+        'specification': '100mg',
+        'color_value': 4291042874, // 0xFFC41E3A
+        'is_active': 1,
+        'created_at': now.toIso8601String(),
+        'updated_at': now.toIso8601String(),
+      });
+      await dbV2.close();
+
+      // Step 2: Open same database at version 3 with migration
+      final dbV3 = await databaseFactoryFfi.openDatabase(
+        path,
+        options: OpenDatabaseOptions(
+          version: 3,
+          onCreate: (db, version) async {},
+          onUpgrade: (db, oldVersion, newVersion) async {
+            if (oldVersion < 2) {
+              await db.execute('ALTER TABLE medicines ADD COLUMN current_stock REAL DEFAULT 0.0');
+              await db.execute('ALTER TABLE medicines ADD COLUMN alert_threshold REAL DEFAULT 0.0');
+            }
+            if (oldVersion < 3) {
+              await db.execute(
+                'UPDATE medicines SET color_value = 4291176488 WHERE color_value = 4291042874',
+              );
+            }
+          },
+        ),
+      );
+
+      // Step 3: Verify migration result
+      final results = await dbV3.query('medicines', where: 'id = ?', whereArgs: ['test-mig']);
+      expect(results.length, 1);
+      expect(results[0]['color_value'], 4291176488); // 0xFFC62828
+
+      await dbV3.close();
+
+      // Cleanup
+      await databaseFactoryFfi.deleteDatabase(path);
     });
 
     test('用药计划含多个时间点', () async {

@@ -139,6 +139,14 @@ void main() {
       );
       expect(medicineProvider.medicines[0].colorValue, 0xFF2196F3);
     });
+
+    // TC-FIX-01: 验证 Provider 默认 colorValue 为 0xFFC62828
+    test('TC-FIX-01: 默认 colorValue 为新红绿融合配色', () async {
+      await medicineProvider.addMedicine(
+        name: '测试药品', dosageForm: '片剂', specification: '100mg',
+      );
+      expect(medicineProvider.medicines[0].colorValue, 0xFFC62828);
+    });
   });
 
   // ==================== ScheduleProvider ====================
