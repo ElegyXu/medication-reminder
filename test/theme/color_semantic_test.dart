@@ -74,12 +74,12 @@ void main() {
 
   group('TC-COLOR-002: Medicine form icon colors WCAG AA', () {
     final medicineColors = [
-      const Color(0xFFA73909),  // primary warm red-orange
-      const Color(0xFF775849),  // secondary warm brown
-      const Color(0xFF6A5D2D),  // tertiary warm olive
-      const Color(0xFFBA1A1A),  // error red
-      const Color(0xFF9C4235),  // warm brick
-      const Color(0xFF5D4037),  // warm dark brown
+      const Color(0xFFC62828),  // 红 (seed red)
+      const Color(0xFFA31520),  // 深红 (primary)
+      const Color(0xFF8D4E2A),  // 红棕
+      const Color(0xFF5C7A2E),  // 绿棕
+      const Color(0xFF2E7D32),  // 深绿
+      const Color(0xFF1B6D1B),  // 绿 (tertiary)
     ];
 
     test('all 6 medicine icon colors meet WCAG AA 4.5:1 on surface', () {
@@ -90,16 +90,15 @@ void main() {
       }
     });
 
-    test('all medicine colors are warm-toned (red hue range, not cool blue/green)', () {
+    test('all medicine colors form a red-to-green gradient (red/red-brown hues → green hues)', () {
       for (final color in medicineColors) {
         final hsl = HSLColor.fromColor(color);
-        // Warm colors: hue 0-60 (red-orange-yellow) or near 360
-        // Cool blues: 180-300, greens: 60-180
-        // Our palette is red/brown/olive — all warm
         final hue = hsl.hue;
-        final isWarm = (hue >= 0 && hue <= 80) || (hue >= 340 && hue <= 360);
-        expect(isWarm, isTrue,
-            reason: 'Color #${color.toARGB32().toRadixString(16)} hue=$hue is not in warm range');
+        // Colors should be in red range (0-80 or 340-360) or green range (80-180)
+        final isRedEnd = (hue >= 0 && hue <= 80) || (hue >= 340 && hue <= 360);
+        final isGreenEnd = (hue >= 80 && hue <= 180);
+        expect(isRedEnd || isGreenEnd, isTrue,
+            reason: 'Color #${color.toARGB32().toRadixString(16)} hue=$hue is not in red or green range');
       }
     });
   });
@@ -117,8 +116,8 @@ void main() {
       expect(cs.tertiaryContainer.value, isNot(equals(0)));
     });
 
-    test('ColorScheme seed is still Warm Coral', () {
-      expect(AppTheme.seedColor, const Color(0xFFFF7043));
+    test('ColorScheme seed is #C62828', () {
+      expect(AppTheme.seedColor, const Color(0xFFC62828));
     });
   });
 
@@ -152,27 +151,27 @@ void main() {
     });
   });
 
-  group('TC-COLOR-04: Tertiary token is warm-toned (amber hue 15°–45°)', () {
-    test('tertiary hue is within warm amber range [15, 45]', () {
+  group('TC-COLOR-04: Tertiary token is green-toned (hue 100°–140°)', () {
+    test('tertiary hue is within green range [100, 140]', () {
       final hsl = HSLColor.fromColor(cs.tertiary);
-      expect(hsl.hue, greaterThanOrEqualTo(15));
-      expect(hsl.hue, lessThanOrEqualTo(45));
+      expect(hsl.hue, greaterThanOrEqualTo(100));
+      expect(hsl.hue, lessThanOrEqualTo(140));
     });
 
-    test('tertiary should be Color(0xFF7A5900)', () {
-      expect(cs.tertiary, const Color(0xFF7A5900));
+    test('tertiary should be Color(0xFF1B6D1B)', () {
+      expect(cs.tertiary, const Color(0xFF1B6D1B));
     });
 
     test('onTertiary should be white', () {
       expect(cs.onTertiary, const Color(0xFFFFFFFF));
     });
 
-    test('tertiaryContainer should be Color(0xFFFFDF9B)', () {
-      expect(cs.tertiaryContainer, const Color(0xFFFFDF9B));
+    test('tertiaryContainer should be Color(0xFFA5F0A3)', () {
+      expect(cs.tertiaryContainer, const Color(0xFFA5F0A3));
     });
 
-    test('onTertiaryContainer should be Color(0xFF271900)', () {
-      expect(cs.onTertiaryContainer, const Color(0xFF271900));
+    test('onTertiaryContainer should be Color(0xFF002106)', () {
+      expect(cs.onTertiaryContainer, const Color(0xFF002106));
     });
 
     test('tertiary contrast on surface ≥ 4.5:1', () {

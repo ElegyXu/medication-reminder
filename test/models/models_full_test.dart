@@ -12,7 +12,7 @@ void main() {
   group('Medicine 模型', () {
     final medicine = Medicine(
       id: 'med-001', name: '阿莫西林', dosageForm: '胶囊', specification: '500mg',
-      notes: '饭后服用', colorValue: 0xFFC41E3A, isActive: true,
+      notes: '饭后服用', colorValue: 0xFFC62828, isActive: true,
       createdAt: now, updatedAt: now,
     );
 
@@ -23,7 +23,7 @@ void main() {
       expect(map['dosage_form'], '胶囊');
       expect(map['specification'], '500mg');
       expect(map['notes'], '饭后服用');
-      expect(map['color_value'], 0xFFC41E3A);
+      expect(map['color_value'], 0xFFC62828);
       expect(map['is_active'], 1);
       expect(map['created_at'], now.toIso8601String());
       expect(map['updated_at'], now.toIso8601String());
@@ -36,7 +36,7 @@ void main() {
       expect(m.dosageForm, '胶囊');
       expect(m.specification, '500mg');
       expect(m.notes, '饭后服用');
-      expect(m.colorValue, 0xFFC41E3A);
+      expect(m.colorValue, 0xFFC62828);
       expect(m.isActive, true);
     });
 
@@ -82,12 +82,12 @@ void main() {
       expect(m.isActive, true);
     });
 
-    test('默认值 colorValue=0xFFC41E3A', () {
+    test('默认值 colorValue=0xFFC62828', () {
       final m = Medicine(
         id: 'm1', name: '维C', dosageForm: '片剂', specification: '100mg',
         createdAt: now, updatedAt: now,
       );
-      expect(m.colorValue, 0xFFC41E3A);
+      expect(m.colorValue, 0xFFC62828);
     });
 
     test('toMap→fromMap 往返一致性', () {

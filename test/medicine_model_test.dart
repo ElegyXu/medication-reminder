@@ -11,7 +11,7 @@ void main() {
         'dosage_form': '胶囊',
         'specification': '500mg',
         'notes': '饭后服用',
-        'color_value': 0xFFC41E3A,
+        'color_value': 0xFFC62828,
         'is_active': 1,
         'created_at': now.toIso8601String(),
         'updated_at': now.toIso8601String(),
@@ -22,7 +22,7 @@ void main() {
       expect(m.dosageForm, '胶囊');
       expect(m.specification, '500mg');
       expect(m.notes, '饭后服用');
-      expect(m.colorValue, 0xFFC41E3A);
+      expect(m.colorValue, 0xFFC62828);
       expect(m.isActive, true);
     });
 
@@ -62,7 +62,7 @@ void main() {
         id: 'med-001', name: '测试', dosageForm: '片剂',
         specification: '100mg', createdAt: now, updatedAt: now,
       );
-      expect(m.colorValue, 0xFFC41E3A);
+      expect(m.colorValue, 0xFFC62828);
     });
   });
 }

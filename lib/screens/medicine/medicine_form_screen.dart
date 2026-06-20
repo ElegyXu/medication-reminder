@@ -19,16 +19,16 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
   late TextEditingController _stockController;
   late TextEditingController _thresholdController;
   String _dosageForm = '片剂';
-  int _colorValue = 0xFFA73909;
+  int _colorValue = 0xFFC62828;
 
   final List<String> _dosageForms = ['片剂', '胶囊', '口服液', '颗粒', '丸剂', '注射剂', '外用', '其他'];
   final List<Color> _medicineColors = [
-    const Color(0xFFA73909),  // primary warm red-orange
-    const Color(0xFF775849),  // secondary warm brown
-    const Color(0xFF6A5D2D),  // tertiary warm olive
-    const Color(0xFFBA1A1A),  // error red
-    const Color(0xFF9C4235),  // warm brick (介于 primary 和 error)
-    const Color(0xFF5D4037),  // warm dark brown
+    const Color(0xFFC62828),  // 红 (seed red)
+    const Color(0xFFA31520),  // 深红 (primary)
+    const Color(0xFF8D4E2A),  // 红棕
+    const Color(0xFF5C7A2E),  // 绿棕
+    const Color(0xFF2E7D32),  // 深绿
+    const Color(0xFF1B6D1B),  // 绿 (tertiary)
   ];
 
   bool get isEditing => widget.medicine != null;

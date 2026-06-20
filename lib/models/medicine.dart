@@ -17,7 +17,7 @@ class Medicine {
     required this.dosageForm,
     required this.specification,
     this.notes,
-    this.colorValue = 0xFFC41E3A,
+    this.colorValue = 0xFFC62828,
     this.currentStock = 0.0,
     this.alertThreshold = 0.0,
     this.isActive = true,

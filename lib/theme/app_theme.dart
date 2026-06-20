@@ -2,17 +2,39 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Warm Coral Palette for Healthcare App
-  static const Color seedColor = Color(0xFFFF7043);
+  static const Color seedColor = Color(0xFFC62828);
 
   static ThemeData get lightTheme {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: seedColor,
       brightness: Brightness.light,
     ).copyWith(
-      tertiary: const Color(0xFF7A5900),
+      // Primary - 红色系
+      primary: const Color(0xFFA31520),
+      onPrimary: const Color(0xFFFFFFFF),
+      primaryContainer: const Color(0xFFFFDAD5),
+      onPrimaryContainer: const Color(0xFF410005),
+      // Secondary
+      secondary: const Color(0xFF775655),
+      onSecondary: const Color(0xFFFFFFFF),
+      secondaryContainer: const Color(0xFFFFDAD5),
+      onSecondaryContainer: const Color(0xFF2C1515),
+      // Tertiary - 绿色系
+      tertiary: const Color(0xFF1B6D1B),
       onTertiary: const Color(0xFFFFFFFF),
-      tertiaryContainer: const Color(0xFFFFDF9B),
-      onTertiaryContainer: const Color(0xFF271900),
+      tertiaryContainer: const Color(0xFFA5F0A3),
+      onTertiaryContainer: const Color(0xFF002106),
+      // Error
+      error: const Color(0xFFBA1A1A),
+      onError: const Color(0xFFFFFFFF),
+      // Background
+      background: const Color(0xFFFFF8F7),
+      onBackground: const Color(0xFF201A1A),
+      // Surface
+      surface: const Color(0xFFFFFFFF),
+      onSurface: const Color(0xFF201A1A),
+      surfaceVariant: const Color(0xFFF5F0F0),
+      onSurfaceVariant: const Color(0xFF534342),
     );
 
     // ── Text Theme ──
