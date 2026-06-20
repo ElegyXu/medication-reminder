@@ -4,38 +4,67 @@ class AppTheme {
   // Warm Coral Palette for Healthcare App
   static const Color seedColor = Color(0xFFC62828);
 
+  /// 方案 B：语义增强 — 34 token 全色阶 + 业务语义色
+  /// seedColor #C62828 | Primary红 Secondary金 Tertiary绿
+  static final ColorScheme lightScheme = ColorScheme.fromSeed(
+    seedColor: seedColor,
+    brightness: Brightness.light,
+  ).copyWith(
+    // === Primary 红 ===
+    primary:                const Color(0xFFA31520),
+    onPrimary:              const Color(0xFFFFFFFF),
+    primaryContainer:       const Color(0xFFFFDAD5),
+    onPrimaryContainer:     const Color(0xFF410005),
+    // === Secondary 金 ===
+    secondary:              const Color(0xFF6D5E00),
+    onSecondary:            const Color(0xFFFFFFFF),
+    secondaryContainer:     const Color(0xFFFAE287),
+    onSecondaryContainer:   const Color(0xFF221B00),
+    // === Tertiary 绿 ===
+    tertiary:               const Color(0xFF1B6D1B),
+    onTertiary:             const Color(0xFFFFFFFF),
+    tertiaryContainer:      const Color(0xFFA5F0A3),
+    onTertiaryContainer:    const Color(0xFF002106),
+    // === Error ===
+    error:                  const Color(0xFFBA1A1A),
+    onError:                const Color(0xFFFFFFFF),
+    errorContainer:         const Color(0xFFFFDAD5),
+    onErrorContainer:       const Color(0xFF410005),
+    // === Surface + 色阶 ===
+    surface:                const Color(0xFFFFFFFF),
+    onSurface:              const Color(0xFF201A1A),
+    surfaceVariant:         const Color(0xFFF5F0F0),
+    onSurfaceVariant:       const Color(0xFF534342),
+    surfaceContainerLowest:  const Color(0xFFFFF5F3),
+    surfaceContainerLow:     const Color(0xFFFDEAE8),
+    surfaceContainer:        const Color(0xFFF7E3E2),
+    surfaceContainerHigh:    const Color(0xFFF1DDDB),
+    surfaceContainerHighest: const Color(0xFFECD7D5),
+    surfaceTint:            const Color(0xFFA31520),
+    // === Background ===
+    background:             const Color(0xFFFFF8F7),
+    onBackground:           const Color(0xFF201A1A),
+    // === Outline ===
+    outline:                const Color(0xFF857372),
+    outlineVariant:         const Color(0xFFD7C2C1),
+    // === Inverse ===
+    inverseSurface:         const Color(0xFF352F2F),
+    onInverseSurface:       const Color(0xFFFAEDEC),
+    // === Scrim / Shadow ===
+    scrim:                  const Color(0xFF000000),
+    shadow:                 const Color(0xFF000000),
+  );
+
+  /// 服药业务语义颜色
+  static const medTaken            = Color(0xFF1B6D1B);
+  static const medTakenContainer   = Color(0xFFE6F5E6);
+  static const medPending          = Color(0xFFFF9800);
+  static const medPendingContainer = Color(0xFFFFF3E0);
+  static const medMissed           = Color(0xFFBA1A1A);
+  static const medMissedContainer  = Color(0xFFFFE8E8);
+
   static ThemeData get lightTheme {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: seedColor,
-      brightness: Brightness.light,
-    ).copyWith(
-      // Primary - 红色系
-      primary: const Color(0xFFA31520),
-      onPrimary: const Color(0xFFFFFFFF),
-      primaryContainer: const Color(0xFFFFDAD5),
-      onPrimaryContainer: const Color(0xFF410005),
-      // Secondary
-      secondary: const Color(0xFF775655),
-      onSecondary: const Color(0xFFFFFFFF),
-      secondaryContainer: const Color(0xFFFFDAD5),
-      onSecondaryContainer: const Color(0xFF2C1515),
-      // Tertiary - 绿色系
-      tertiary: const Color(0xFF1B6D1B),
-      onTertiary: const Color(0xFFFFFFFF),
-      tertiaryContainer: const Color(0xFFA5F0A3),
-      onTertiaryContainer: const Color(0xFF002106),
-      // Error
-      error: const Color(0xFFBA1A1A),
-      onError: const Color(0xFFFFFFFF),
-      // Background
-      background: const Color(0xFFFFF8F7),
-      onBackground: const Color(0xFF201A1A),
-      // Surface
-      surface: const Color(0xFFFFFFFF),
-      onSurface: const Color(0xFF201A1A),
-      surfaceVariant: const Color(0xFFF5F0F0),
-      onSurfaceVariant: const Color(0xFF534342),
-    );
+    final colorScheme = lightScheme;
 
     // ── Text Theme ──
     final tt = Typography.material2021(platform: TargetPlatform.android).englishLike;

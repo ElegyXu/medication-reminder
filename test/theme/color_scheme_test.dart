@@ -91,19 +91,20 @@ void main() {
     });
 
     test('TC-FUSION-07: medicine_form 的 6 个颜色值验证明确且非旧值', () {
-      // 从 medicine_form_screen 中同步的新颜色列表
+      // 方案 B 新 6 色
       final newMedicineColors = [
-        0xFFC62828, // 红
-        0xFFA31520, // 深红
-        0xFF8D4E2A, // 红棕
-        0xFF5C7A2E, // 绿棕
-        0xFF2E7D32, // 深绿
-        0xFF1B6D1B, // 绿
+        0xFFC62828, // 红 — seed
+        0xFFA31520, // 深红 — primary
+        0xFF9B4A1A, // 红棕
+        0xFF6D5E00, // 金黄 — secondary
+        0xFF3D6B1E, // 绿棕
+        0xFF1B6D1B, // 绿 — tertiary
       ];
       // 旧值（橙色系/棕色系）
       final oldMedicineColors = [
         0xFFA73909, 0xFF775849, 0xFF6A5D2D,
         0xFFBA1A1A, 0xFF9C4235, 0xFF5D4037,
+        0xFF8D4E2A, 0xFF5C7A2E, 0xFF2E7D32,
       ];
 
       for (final color in newMedicineColors) {
@@ -111,6 +112,58 @@ void main() {
         expect(oldMedicineColors, isNot(contains(color)));
       }
       expect(newMedicineColors.length, equals(6));
+    });
+
+    test('TC-FUSION-08: secondary = 0xFF6D5E00 且 onSecondary = 0xFFFFFFFF', () {
+      expect(scheme.secondary, const Color(0xFF6D5E00));
+      expect(scheme.onSecondary, const Color(0xFFFFFFFF));
+    });
+
+    test('TC-FUSION-09: surfaceContainerLowest/ContainerLow/Container/ContainerHigh/ContainerHighest 均非零', () {
+      expect(scheme.surfaceContainerLowest.value, isNot(equals(0)));
+      expect(scheme.surfaceContainerLow.value, isNot(equals(0)));
+      expect(scheme.surfaceContainer.value, isNot(equals(0)));
+      expect(scheme.surfaceContainerHigh.value, isNot(equals(0)));
+      expect(scheme.surfaceContainerHighest.value, isNot(equals(0)));
+    });
+
+    test('TC-FUSION-10: outline = 0xFF857372 且 outlineVariant = 0xFFD7C2C1', () {
+      expect(scheme.outline, const Color(0xFF857372));
+      expect(scheme.outlineVariant, const Color(0xFFD7C2C1));
+    });
+  });
+
+  group('业务语义颜色', () {
+    test('TC-SEM-01: medTaken = 0xFF1B6D1B', () {
+      expect(AppTheme.medTaken, const Color(0xFF1B6D1B));
+    });
+
+    test('TC-SEM-02: medTakenContainer = 0xFFE6F5E6', () {
+      expect(AppTheme.medTakenContainer, const Color(0xFFE6F5E6));
+    });
+
+    test('TC-SEM-03: medPending = 0xFFFF9800', () {
+      expect(AppTheme.medPending, const Color(0xFFFF9800));
+    });
+
+    test('TC-SEM-04: medPendingContainer = 0xFFFFF3E0', () {
+      expect(AppTheme.medPendingContainer, const Color(0xFFFFF3E0));
+    });
+
+    test('TC-SEM-05: medMissed = 0xFFBA1A1A', () {
+      expect(AppTheme.medMissed, const Color(0xFFBA1A1A));
+    });
+
+    test('TC-SEM-06: medMissedContainer = 0xFFFFE8E8', () {
+      expect(AppTheme.medMissedContainer, const Color(0xFFFFE8E8));
+    });
+
+    test('TC-SEM-07: medTaken == lightScheme.tertiary', () {
+      expect(AppTheme.medTaken, AppTheme.lightScheme.tertiary);
+    });
+
+    test('TC-SEM-08: medMissed == lightScheme.error', () {
+      expect(AppTheme.medMissed, AppTheme.lightScheme.error);
     });
   });
 }

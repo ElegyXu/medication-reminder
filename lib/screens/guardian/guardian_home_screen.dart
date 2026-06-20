@@ -142,7 +142,7 @@ class _GuardianHomeScreenState extends State<GuardianHomeScreen> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.people_outline, size: 64, color: Colors.grey.shade300),
+                      Icon(Icons.people_outline, size: 64, color: cs.outline),
                       const SizedBox(height: 12),
                       Text('暂无绑定患者', style: TextStyle(color: cs.onSurfaceVariant, fontSize: 16)),
                       const SizedBox(height: 4),
@@ -168,7 +168,7 @@ class _GuardianHomeScreenState extends State<GuardianHomeScreen> {
                         subtitle: Text('${binding.patientPhone} · ${binding.statusLabel}'),
                         trailing: TextButton(
                           onPressed: () => _confirmDelete(binding),
-                          style: TextButton.styleFrom(foregroundColor: Colors.red),
+                          style: TextButton.styleFrom(foregroundColor: cs.error),
                           child: const Text('解除'),
                         ),
                       ),

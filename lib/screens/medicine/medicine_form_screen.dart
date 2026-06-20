@@ -22,13 +22,13 @@ class _MedicineFormScreenState extends State<MedicineFormScreen> {
   int _colorValue = 0xFFC62828;
 
   final List<String> _dosageForms = ['片剂', '胶囊', '口服液', '颗粒', '丸剂', '注射剂', '外用', '其他'];
-  final List<Color> _medicineColors = [
-    const Color(0xFFC62828),  // 红 (seed red)
-    const Color(0xFFA31520),  // 深红 (primary)
-    const Color(0xFF8D4E2A),  // 红棕
-    const Color(0xFF5C7A2E),  // 绿棕
-    const Color(0xFF2E7D32),  // 深绿
-    const Color(0xFF1B6D1B),  // 绿 (tertiary)
+  static const List<Color> _medicineColors = [
+    Color(0xFFC62828), // 红 — seed
+    Color(0xFFA31520), // 深红 — primary
+    Color(0xFF9B4A1A), // 红棕 — 红+金混色
+    Color(0xFF6D5E00), // 金黄 — secondary
+    Color(0xFF3D6B1E), // 绿棕 — 金+绿混色
+    Color(0xFF1B6D1B), // 绿 — tertiary
   ];
 
   bool get isEditing => widget.medicine != null;
