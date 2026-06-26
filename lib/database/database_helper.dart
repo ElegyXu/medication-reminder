@@ -9,6 +9,7 @@ import '../models/guardian_binding.dart';
 class DatabaseHelper {
   static DatabaseHelper? _instance;
   static Database? _database;
+  static String databaseName = 'medication_reminder.db';
 
   DatabaseHelper._();
 
@@ -17,14 +18,30 @@ class DatabaseHelper {
     return _instance!;
   }
 
+  static Future<void> closeDatabase() async {
+    if (_database != null) {
+      await _database!.close();
+      _database = null;
+    }
+    _instance = null;
+  }
+
   Future<Database> get database async {
     _database ??= await _initDatabase();
     return _database!;
   }
 
   Future<Database> _initDatabase() async {
+    if (databaseName == inMemoryDatabasePath) {
+      return await openDatabase(
+        inMemoryDatabasePath,
+        version: 3,
+        onCreate: _onCreate,
+        onUpgrade: _onUpgrade,
+      );
+    }
     final dbPath = await getDatabasesPath();
-    final path = join(dbPath, 'medication_reminder.db');
+    final path = join(dbPath, databaseName);
     return await openDatabase(
       path,
       version: 3,

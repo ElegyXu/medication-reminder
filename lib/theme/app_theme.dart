@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../models/reminder.dart';
+
 
 class AppTheme {
   // Warm Coral Palette for Healthcare App
@@ -123,7 +125,7 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         elevation: 0,
         backgroundColor: colorScheme.surfaceContainer,
-        indicatorColor: colorScheme.secondaryContainer,
+        indicatorColor: colorScheme.primaryContainer,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         height: 65,
       ),
@@ -202,14 +204,14 @@ class AppTheme {
       chipTheme: ChipThemeData(
         elevation: 0,
         backgroundColor: colorScheme.surfaceContainerHighest,
-        selectedColor: colorScheme.secondaryContainer,
+        selectedColor: colorScheme.primaryContainer,
         labelStyle: TextStyle(
           color: colorScheme.onSurface,
           fontSize: 13,
           fontWeight: FontWeight.normal,
         ),
         secondaryLabelStyle: TextStyle(
-          color: colorScheme.onSecondaryContainer,
+          color: colorScheme.onPrimaryContainer,
           fontSize: 13,
           fontWeight: FontWeight.w600,
         ),
@@ -222,13 +224,13 @@ class AppTheme {
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return colorScheme.secondaryContainer;
+              return colorScheme.primaryContainer;
             }
             return colorScheme.surface;
           }),
           foregroundColor: WidgetStateProperty.resolveWith((states) {
             if (states.contains(WidgetState.selected)) {
-              return colorScheme.onSecondaryContainer;
+              return colorScheme.onPrimaryContainer;
             }
             return colorScheme.onSurface;
           }),
@@ -262,4 +264,31 @@ class AppTheme {
       ),
     );
   }
+
+  static Color getStatusColor(ReminderStatus status, ColorScheme cs) {
+    switch (status) {
+      case ReminderStatus.taken:
+        return medTaken;
+      case ReminderStatus.skipped:
+        return medTaken;
+      case ReminderStatus.pending:
+        return medPending;
+      case ReminderStatus.missed:
+        return medMissed;
+    }
+  }
+
+  static IconData getStatusIcon(ReminderStatus status) {
+    switch (status) {
+      case ReminderStatus.taken:
+        return Icons.check_circle;
+      case ReminderStatus.skipped:
+        return Icons.skip_next;
+      case ReminderStatus.pending:
+        return Icons.access_time;
+      case ReminderStatus.missed:
+        return Icons.warning_amber;
+    }
+  }
 }
+

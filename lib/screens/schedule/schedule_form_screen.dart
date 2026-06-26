@@ -379,8 +379,8 @@ class _ScheduleFormScreenState extends State<ScheduleFormScreen> {
                   Text('用药时间', style: Theme.of(context).textTheme.titleSmall),
                   TextButton.icon(
                     onPressed: _timePoints.length < 5 ? _addTimePoint : null,
-                    icon: const Icon(Icons.add, size: 18),
-                    label: const Text('添加'),
+                    icon: Icon(Icons.add, size: 18, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    label: Text('添加', style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
                   ),
                 ],
               ),
